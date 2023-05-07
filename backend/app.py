@@ -85,8 +85,8 @@ def register():
            + 'where userID = "{0}"').format(username)
     data = db.session.execute(sql).fetchall()
     if not data:
-        sql = ('insert into user(userID, password) ' \
-               + 'value ("{0}", "{1}")').format(username, password)
+        sql = ('insert into user(userID, password, superMagnager) ' \
+               + 'value ("{0}", "{1}", False)').format(username, password)
         db.session.execute(sql)
         db.session.commit()
         return jsonify({"status": "200", "msg": "注册成功"})
@@ -98,25 +98,41 @@ def register():
 def user_get_course():
     rq = request.json
     if request.method == "GET":
-
-        userID = rq.get('userID')
-
-        sql = ('select course.courseID, course.courseInfo, relation.teacher' \
-               + 'from course as course, userCourseRelationship as relation' \
-               + 'where relation.userID = "{0}" and relation.courseID = course.courseID').format(userID) 
-        data = db.session.execute(sql).fetchall()
-
-        result = []
-        for i in range(len(data)):
-            info = {
-                'courseID': data[i][0],
-                'courseInfo': data[i][1],
-                'coursePermission': data[i][2]
-            }
-            result.append(info)
+        permission = rq.get("permission")
+        if permission == True:
+            sql = 'select * from course'
+            data = db.session.execute(sql).fetchall()
+            result = []
+            for i in range(len(data)):
+                info = {
+                    'courseID': data[i][0],
+                    'courseInfo': data[i][1],
+                    'coursePermission': True
+                }
+                result.append(info)
         
-        print('course_info', result)
-        return jsonify({"status":"200", "tabledata": result})
+            print('course_info', result)
+            return jsonify({"status":"200", "tabledata": result})
+
+        else:
+            userID = rq.get('userID')
+
+            sql = ('select course.courseID, course.courseInfo, relation.teacher' \
+                   + 'from course as course, userCourseRelationship as relation' \
+                   + 'where relation.userID = "{0}" and relation.courseID = course.courseID').format(userID) 
+            data = db.session.execute(sql).fetchall()
+
+            result = []
+            for i in range(len(data)):
+                info = {
+                    'courseID': data[i][0],
+                    'courseInfo': data[i][1],
+                    'coursePermission': data[i][2]
+                }
+                result.append(info)
+        
+            print('course_info', result)
+            return jsonify({"status":"200", "tabledata": result})
     if request.method == "POST":
         permission = rq.get("permission")
         if permission != True:

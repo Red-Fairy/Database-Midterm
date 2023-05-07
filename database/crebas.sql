@@ -95,11 +95,12 @@ create table user
 (
    userID               char(128) not null,
    password             char(128) not null,
+   superManager         bool not null,
    primary key (userID)
 );
 
-INSERT INTO user VALUES ('redfairy', 'redfairy');
-INSERT INTO user VALUES ('bluefairy', 'bluefairy');
+INSERT INTO user VALUES ('redfairy', 'redfairy', True);
+INSERT INTO user VALUES ('bluefairy', 'bluefairy', false);
 
 /*==============================================================*/
 /* Table: userCourseRelationship                                */
