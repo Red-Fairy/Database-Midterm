@@ -64,9 +64,14 @@ router.beforeEach((to, from, next) => {
     const userRole = localStorage.getItem('userRole');
     const accessToken = localStorage.getItem('accessToken');
 
+    // debug, print out the user role
+    console.log('userRole: ', userRole);
+    console.log('accessToken: ', accessToken);
+    console.log('requiresAuth: ', requiresAuth);
+
     if (requiresAuth && !accessToken) {
         // Redirect to the login page if the route requires authentication and there's no access token
-        next({ name: 'login' });
+        next({ name: 'logIn' });
     } else if (to.meta.allowedRoles && !to.meta.allowedRoles.includes(userRole)) {
         // Redirect to a 'not authorized' or 'forbidden' page if the user's role is not allowed for the route
         next({ name: 'forbidden' });
