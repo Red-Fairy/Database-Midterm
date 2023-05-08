@@ -1,4 +1,3 @@
-import caching as caching
 from flask import Flask, jsonify, request
 from config import BaseConfig
 from flask_sqlalchemy import SQLAlchemy
