@@ -93,7 +93,7 @@ def register():
     else:
         return jsonify({"status": "1000", "msg": "该用户已存在"})
 
-@app.route("/api/user/course/get", methods=["GET", "POST", "ADD", "DELETE"])
+@app.route("/api/user/course", methods=["GET", "POST", "ADD", "DELETE"])
 @cross_origin()
 def user_get_course():
     rq = request.json
@@ -133,12 +133,20 @@ def user_get_course():
         
             print('course_info', result)
             return jsonify({"status":"200", "tabledata": result})
+
     if request.method == "POST":
         permission = rq.get("permission")
-        if permission != True:
-            return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
-
+        userID = rq.get("userID")
         courseID = rq.get("courseID")
+        if permission != True:
+            sql = ('select *' \
+                   + 'from userCourseRelationship' \
+                   + 'where userID = "{0}" and courseID = course.courseID').format(userID, courseID)
+
+            data = db.session.execute(sql).fetchall()
+            if data == None:
+                return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
+
         courseInfo = rq.get("courseInfo")
         sql = ('update course ' \
               + 'set courseInfo = "{0}" ' \
@@ -169,6 +177,55 @@ def user_get_course():
         courseID = rq.get("courseID")
         sql = ('delete from course ' \
               + 'where courseID = "{0}"').format(courseID)
+        db.session.execute(sql)
+        db.session.commit()
+
+        return jsonify({"status":"200", "msg": "修改成功"})
+
+# 超管编辑 用户<-->课程关系
+@app.route("/api/user/user_course", methods=["POST", "ADD", "DELETE"])
+@cross_origin()
+def user_get_user_course():
+    rq = request.json
+    if request.method == "POST":
+        permission = rq.get("permission")
+        if permission != True:
+            return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
+
+        courseID = rq.get("courseID")
+        userID = rq.get("userID")
+        teacher = rq.get("teacher")
+        sql = ('update userCourseRelationship ' \
+              + 'set teacher = {0} ' \
+              + 'where courseID = "{1}" and userID = "{2}').format(teacher, courseID, userID)
+        db.session.execute(sql)
+        db.session.commit()
+
+        return jsonify({"status":"200", "msg": "修改成功"})
+    if request.method == "ADD":
+        permission = rq.get("permission")
+        if permission != True:
+            return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
+
+        courseID = rq.get("courseID")
+        userID = rq.get("userID")
+        teacher = rq.get("teacher")
+        sql = ('insert userCourseRelationship(courseID, userID, teacher) ' \
+              + 'value("{1}", "{2}", {0})').format(teacher, courseID, userID)
+        db.session.execute(sql)
+        db.session.commit()
+
+        return jsonify({"status":"200", "msg": "修改成功"})
+
+    if request.method == "DELETE":
+        permission = rq.get("permission")
+        if permission != True:
+            return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
+
+        courseID = rq.get("courseID")
+        userID = rq.get("userID")
+        sql = ('delete from userCourseRelationship ' \
+              + 'where courseID = "{0}" and userID = "{1}")').format(courseID, userID)
         db.session.execute(sql)
         db.session.commit()
 
