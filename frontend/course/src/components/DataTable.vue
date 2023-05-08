@@ -17,6 +17,7 @@
           </td>
           <td v-else>
             <input type="text" v-model="row.Name" />
+            <input type="email" v-model="row.Email" />
           </td>
           <td>{{ row.Email }}</td>
           <td v-if="isAdmin">
