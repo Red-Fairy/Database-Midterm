@@ -6,7 +6,7 @@ class Config(object):
     HOST = '127.0.0.1'
     PORT = "3306"
     USERNAME = "root"
-    PASSWORD = "rainsheep@321212"
+    PASSWORD = "123456"
     DBNAME = 'tlatpku'
 
     REDIS_HOST = '127.0.0.1'
