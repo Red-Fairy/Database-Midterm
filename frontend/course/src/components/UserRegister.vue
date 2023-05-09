@@ -23,7 +23,7 @@
   
 <script>
 // import axios from "axios";
-import apiClient from '@/api';
+import api from '@/api';
 
 export default {
     data() {
@@ -37,11 +37,11 @@ export default {
     methods: {
         async register() {
             try {
-                const response = await apiClient.register(this.userid, this.password);
+                const response = await api.register(this.userid, this.password);
 
                 if (response.status === "200") {
-                    this.errorMsg = "";
-                    this.$router.push("/login");
+                    this.errorMsg = "注册成功";
+                    // this.$router.push("/login");
                 } else {
                     this.errorMsg = response.msg;
                 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiClient = axios.create({
+const api = axios.create({
   // local host
   baseURL: 'http://localhost:5000',
   headers: {
@@ -11,9 +11,16 @@ const apiClient = axios.create({
 
 export default {
   async register(username, password) {
-    const response = await apiClient.post('/api/user/register', {
+    const response = await api.post('/api/user/register', {
       username,
       password,
+    });
+    return response.data;
+  },
+  async login(username, password) {
+    const response = await api.post('/api/user/login', {
+      userid: username,
+      password: password,
     });
     return response.data;
   },

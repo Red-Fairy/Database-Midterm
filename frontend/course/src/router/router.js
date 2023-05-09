@@ -21,12 +21,12 @@ const routes = [
     component: Register,
   },
   {
-    path: '/admin',
+    path: '/admin-dashboard',
     name: 'AdminDashboard',
     component: AdminDashboard,
   },
   {
-    path: '/user',
+    path: '/user-dashboard',
     name: 'UserDashboard',
     component: UserDashboard,
   },

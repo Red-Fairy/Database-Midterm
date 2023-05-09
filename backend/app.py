@@ -47,6 +47,9 @@ def user_login():
     userid = request.json.get("userid").strip()
     password = request.json.get("password").strip()
 
+    # debug: print userid and password
+    print('user_login_userid', userid, 'user_login_password', password)
+
     if not re.search(USER_NAME_REGEX, userid):
         return jsonify({"code": 1000, "msg": "用户名不合规范"})
     if not re.search(PASSWORD_REGEX, password):
@@ -106,7 +109,7 @@ def user_get_course():
         permission = rq.get("permission")
         if permission == True:
             sql = 'select * from course'
-            data = db.session.execute(sql).fetchall()
+            data = db.session.execute(text(sql)).fetchall()
             result = []
             for i in range(len(data)):
                 info = {
@@ -125,7 +128,7 @@ def user_get_course():
             sql = ('select course.courseID, course.courseInfo, relation.teacher' \
                    + 'from course as course, userCourseRelationship as relation' \
                    + 'where relation.userID = "{0}" and relation.courseID = course.courseID').format(userID) 
-            data = db.session.execute(sql).fetchall()
+            data = db.session.execute(text(sql)).fetchall()
 
             result = []
             for i in range(len(data)):
@@ -148,7 +151,7 @@ def user_get_course():
                    + 'from userCourseRelationship' \
                    + 'where userID = "{0}" and courseID = course.courseID').format(userID, courseID)
 
-            data = db.session.execute(sql).fetchall()
+            data = db.session.execute(text(sql)).fetchall()
             if data == None:
                 return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
 
@@ -156,7 +159,7 @@ def user_get_course():
         sql = ('update course ' \
               + 'set courseInfo = "{0}" ' \
               + 'where courseID = "{1}"').format(courseInfo, courseID)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -169,7 +172,7 @@ def user_get_course():
         courseInfo = rq.get("courseInfo")
         sql = ('insert course(courseID, courseInfo) ' \
               + 'value("{0}", "{1}")').format(courseID, courseInfo)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -182,7 +185,7 @@ def user_get_course():
         courseID = rq.get("courseID")
         sql = ('delete from course ' \
               + 'where courseID = "{0}"').format(courseID)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -203,7 +206,7 @@ def user_get_user_course():
         sql = ('update userCourseRelationship ' \
               + 'set teacher = {0} ' \
               + 'where courseID = "{1}" and userID = "{2}').format(teacher, courseID, userID)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -217,7 +220,7 @@ def user_get_user_course():
         teacher = rq.get("teacher")
         sql = ('insert userCourseRelationship(courseID, userID, teacher) ' \
               + 'value("{1}", "{2}", {0})').format(teacher, courseID, userID)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -231,7 +234,7 @@ def user_get_user_course():
         userID = rq.get("userID")
         sql = ('delete from userCourseRelationship ' \
               + 'where courseID = "{0}" and userID = "{1}")').format(courseID, userID)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -246,7 +249,7 @@ def user_get_lecture():
         sql = ('select *' \
                + 'from lecture' \
                + 'where lectureID = "{course}"').format(lecture) 
-        data = db.session.execute(sql).fetchall()
+        data = db.session.execute(text(sql)).fetchall()
 
         result = []
         for i in range(len(data)):
@@ -271,7 +274,7 @@ def user_get_lecture():
         sql = ('update lecture ' \
               + 'set lectureInfo = "{0}" ' \
               + 'where lectureID = "{1}"').format(lectureInfo, lectureID)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -285,7 +288,7 @@ def user_get_lecture():
         lectureInfo = rq.get("lectureInfo")
         sql = ('insert lecture(lectureID, courseID, lectureInfo) ' \
               + 'value("{0}", "{1}", "{2}")').format(lectureID, courseID, lectureInfo)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -298,7 +301,7 @@ def user_get_lecture():
         lectureID = rq.get("lectureID")
         sql = ('delete from lecture ' \
               + 'where lectureID = "{0}"').format(lectureID)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -313,7 +316,7 @@ def user_get_homework():
         sql = ('select * ' \
                 + 'fro homework ' \
                 + 'where homeworkID = "{0}"').format(homeworkID)
-        data = db.session.execute(sql).fetchall()
+        data = db.session.execute(text(sql)).fetchall()
 
         result = []
         for i in range(len(data)):
@@ -332,7 +335,7 @@ def user_get_homework():
         sql = ('update homework ' \
               + 'set homeworkInfo = "{0}" ' \
               + 'where homeworkID = "{1}"').format(homeworkInfo, homeworkID)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -346,7 +349,7 @@ def user_get_homework():
         homeworkInfo = rq.get("homeworkInfo")
         sql = ('insert lecture(homeworkID, lectureID, homeworkInfo) ' \
               + 'value("{0}", "{1}", "{2}")').format(homeworkID, lectureID, homeworkInfo)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -359,7 +362,7 @@ def user_get_homework():
         lectureID = rq.get("homeworkID")
         sql = ('delete from homework ' \
               + 'where homeworkID = "{0}"').format(homeworkID)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -379,7 +382,7 @@ def user_get_submission():
             sql = ('select *' \
                    + 'from submission' \
                    + 'where homeworkID = "{0}" and userID = "{1}"').format(homeworkID, userID) 
-            data = db.session.execute(sql).fetchall()
+            data = db.session.execute(text(sql)).fetchall()
 
             result = []
             for i in range(len(data)):
@@ -399,7 +402,7 @@ def user_get_submission():
             sql = ('select *' \
                    + 'from submission' \
                    + 'where homeworkID = "{0}" ').format(homeworkID) 
-            data = db.session.execute(sql).fetchall()
+            data = db.session.execute(text(sql)).fetchall()
 
             result = []
             for i in range(len(data)):
@@ -428,7 +431,7 @@ def user_get_submission():
         sql = ('update submission ' \
               + 'set submissionScore = "{0}" ' \
               + 'where submissionID = "{1}"').format(submissionScore, submissionID)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
 
         return jsonify({"status":"200", "msg": "修改成功"})
@@ -444,7 +447,7 @@ def user_get_submission():
         submissionInfo = rq.get("submissionInfo")
         sql = ('insert subission(submissionID, userID, lectureID, submissionInfo, submissionScore) ' \
               + 'value("{0}", "{1}", "{2}", "{3}", Null)').format(submissionID, userID, lectureID, submissionInfo)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
         return jsonify({"status":"200", "msg": "修改成功"})
 
@@ -461,12 +464,12 @@ def user_pwd_chg():
         sql = ('select * ' \
               + 'from user ' \
               + ' where userID = "{0}" and password = "{1}"').format(userID, password)
-        data = db.session.execute(sql).fetchall()
+        data = db.session.execute(text(sql)).fetchall()
         if not data:
             return jsonify(status=1000,msg="原始密码错误")
         else:
             sql = ('update user set password = "{0}"' \
                   + 'where userID = "{1}"').format(userID, new_password)
-            db.session.execute(sql)
+            db.session.execute(text(sql))
             db.session.commit()
             return jsonify(status=200,msg="修改成功")

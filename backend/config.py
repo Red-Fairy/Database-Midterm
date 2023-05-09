@@ -21,5 +21,5 @@ SECRET_KEY = 'redfairy'
 
 # 输入限制
 
-USER_NAME_REGEX = '[0-9A-Fa-f]{1,20}'
-PASSWORD_REGEX = '[0-9A-Fa-f]{1,20}'
+USER_NAME_REGEX = '[0-9A-Za-z]{1,20}'
+PASSWORD_REGEX = '[0-9A-Za-z]{1,20}'

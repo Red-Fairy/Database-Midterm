@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <h1>Login</h1>
-    <form @submit.prevent="login">
+    <form @submit.prevent="logIn">
       <div>
         <label for="userid">User ID:</label>
         <input type="text" id="userid" v-model="userid" />
@@ -22,7 +22,8 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
+import api from '@/api';
 
 export default {
   data() {
@@ -32,32 +33,31 @@ export default {
       errorMsg: "",
     };
   },
+
   methods: {
-    async login() {
+    async logIn() {
       try {
-        const response = await axios.post("/api/user/login", {
-          userid: this.userid,
-          password: this.password,
-        });
+        const response = await api.login(this.userid, this.password);
+        if (response.code === 200) {
+          // 登录成功，保存 token 和 permission 到 localStorage
+          localStorage.setItem('token', response.token);
+          localStorage.setItem('permission', response.permission);
 
-        if (response.data.code === 200) {
-          this.errorMsg = "";
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("permission", response.data.permission);
-
-          // Redirect to the appropriate dashboard
-          if (response.data.permission === 'admin') {
-            this.$router.push("/admin");
-          } else if (response.data.permission === 'teacher') {
-            this.$router.push("/teacher");
+          // 根据权限重定向到相应的页面
+          if (response.permission) {
+            // 如果用户是 admin，重定向到 AdminDashboard
+            this.$router.push({ name: 'AdminDashboard' });
           } else {
-            this.$router.push("/student");
+            // 如果用户是 user，重定向到 UserDashboard
+            this.$router.push({ name: 'UserDashboard' });
           }
         } else {
-          this.errorMsg = response.data.msg;
+          // 登录失败，显示错误信息
+          this.errorMsg = response.msg;
         }
       } catch (error) {
-        this.errorMsg = "An error occurred. Please try again.";
+        console.error('Login error:', error);
+        this.errorMsg = '登录失败，请稍后重试。';
       }
     },
     goToRegister() {
