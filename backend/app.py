@@ -25,6 +25,7 @@ from flask_cors import CORS
 from flask_cors import cross_origin
 
 app = Flask(__name__)
+CORS(app)
 
 # 添加配置数据库
 app.config.from_object(Config)
@@ -54,7 +55,7 @@ def user_login():
     sql = ('select * ' \
            + 'from user ' \
            + 'where userID = "{0}" and password = "{1}"').format(userid, password)
-    data = db.session.execute(sql).first()
+    data = db.session.execute(text(sql)).first()
     print('user_login_data', data)
     if data != None:
         user = {
@@ -87,11 +88,11 @@ def register():
     sql = ('select * ' \
            + 'from user ' \
            + 'where userID = "{0}"').format(username)
-    data = db.session.execute(sql).fetchall()
+    data = db.session.execute(text(sql)).fetchall()
     if not data:
-        sql = ('insert into user(userID, password, superMagnager) ' \
+        sql = ('insert into user(userID, password, superManager) ' \
                + 'value ("{0}", "{1}", False)').format(username, password)
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         db.session.commit()
         return jsonify({"status": "200", "msg": "注册成功"})
     else:

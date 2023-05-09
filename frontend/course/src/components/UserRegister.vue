@@ -22,7 +22,8 @@
 </template>
   
 <script>
-import axios from "axios";
+// import axios from "axios";
+import apiClient from '@/api';
 
 export default {
     data() {
@@ -36,16 +37,13 @@ export default {
     methods: {
         async register() {
             try {
-                const response = await axios.post("/api/user/register", {
-                    username: this.userid, // 将userid更改为username，以匹配后端API
-                    password: this.password,
-                });
+                const response = await apiClient.register(this.userid, this.password);
 
-                if (response.data.status === "200") {
+                if (response.status === "200") {
                     this.errorMsg = "";
                     this.$router.push("/login");
                 } else {
-                    this.errorMsg = response.data.msg;
+                    this.errorMsg = response.msg;
                 }
             } catch (error) {
                 this.errorMsg = "An error occurred. Please try again.";
