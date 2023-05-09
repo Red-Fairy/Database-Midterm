@@ -8,6 +8,7 @@ import MySQLdb
 from flask import Flask, jsonify, request
 from config import *
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 import auth
 import json
 import random
@@ -33,7 +34,8 @@ db = SQLAlchemy(app)
 # 检查数据库连接是否成功
 with app.app_context():
     with db.engine.connect() as conn:
-        rs = conn.execute("select 1")
+        query = text("SELECT * FROM user")
+        rs = conn.execute(query)
         print(rs.fetchone())
 
 # 用户登录

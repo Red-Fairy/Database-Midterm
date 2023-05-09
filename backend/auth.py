@@ -2,7 +2,7 @@
 import jwt
 import datetime
 import time
-from jwt.exceptions import ExpiredSignatureError
+# from jwt.exceptions import ExpiredSignatureError
 
 # 全局密钥
 secret = 'pkudatabasehonortrack'
