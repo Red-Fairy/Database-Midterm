@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 class Config(object):
 
     # 数据库的配置
@@ -6,13 +7,13 @@ class Config(object):
     HOST = '127.0.0.1'
     PORT = "3306"
     USERNAME = "root"
-    PASSWORD = "rainsheep@321212"
+    PASSWORD = "123456"
     DBNAME = 'tlatpku'
 
     REDIS_HOST = '127.0.0.1'
     REDIS_PORT = 6379
 
-    SQLALCHEMY_DATABASE_URI = f"{DIALCT}+{DRITVER}://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?charset=utf8"
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{0}:{1}@{2}:{3}/{4}?charset=utf8".format(USERNAME,PASSWORD,HOST,PORT,DBNAME)
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # 密钥，可随意修改

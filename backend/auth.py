@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import jwt
 import datetime
 import time

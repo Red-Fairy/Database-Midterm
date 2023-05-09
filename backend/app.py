@@ -1,3 +1,5 @@
+
+# -*- coding: UTF-8 -*-
 # This project is based on the great work https://github.com/wfloveiu/-----
 # Author: Yuyang Zhou
 # E-Mail: zhouyuyangmike@foxmail.com
