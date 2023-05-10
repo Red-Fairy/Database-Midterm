@@ -33,7 +33,7 @@ drop table if exists userCourseRelationship;
 create table course
 (
    courseID             int not null,
-   courseName           char(128) not null,
+   courseName            char(128) not null,
    courseInfo           char(128),
    primary key (courseID)
 );
@@ -118,20 +118,35 @@ INSERT INTO userCourseRelationship VALUES (1, 'redfairy', false);
 INSERT INTO userCourseRelationship VALUES (1, 'bluefairy', true);
 
 alter table homework add constraint FK_courseOfHomework foreign key (courseID)
-      references course (courseID) on delete restrict on update restrict;
+      references course (courseID) on delete cascade on update cascade;
 
 alter table lecture add constraint FK_courseOfLecture foreign key (courseID)
-      references course (courseID) on delete restrict on update restrict;
+      references course (courseID) on delete cascade on update cascade;
 
 alter table submission add constraint FK_homeworkOfSubmission foreign key (homeworkID)
-      references homework (homeworkID) on delete restrict on update restrict;
+      references homework (homeworkID) on delete cascade on update cascade;
 
 alter table submission add constraint FK_userOfSubmission foreign key (userID)
-      references user (userID) on delete restrict on update restrict;
+      references user (userID) on delete cascade on update cascade;
 
 alter table userCourseRelationship add constraint FK_courseOfRelationship foreign key (courseID)
-      references course (courseID) on delete restrict on update restrict;
+      references course (courseID) on delete cascade on update cascade;
 
 alter table userCourseRelationship add constraint FK_userOfRelationship foreign key (userID)
-      references user (userID) on delete restrict on update restrict;
+      references user (userID) on delete cascade on update cascade;
+
+/*
+testing code:
+
+use tlatpku;
+
+select * from submission;
+
+use tlatpku;
+
+delete from homework
+where homeworkID = 1;
+
+select * from submission;
+*/
 
