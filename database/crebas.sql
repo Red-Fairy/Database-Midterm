@@ -32,13 +32,14 @@ drop table if exists userCourseRelationship;
 /*==============================================================*/
 create table course
 (
-   courseID             char(128) not null,
+   courseID             int not null,
+   courseName           char(128) not null,
    courseInfo           char(128),
    primary key (courseID)
 );
 
-INSERT INTO course VALUES ('编译原理', '编译原理是四大礼包中的一门课');
-INSERT INTO course VALUES ('数据库导论', '数据库导论不是四大礼包中的一门课');
+INSERT INTO course VALUES (1, '编译原理', '编译原理是四大礼包中的一门课');
+INSERT INTO course VALUES (2, '数据库导论', '数据库导论不是四大礼包中的一门课');
 
 /*==============================================================*/
 /* Table: homework                                              */
@@ -46,13 +47,13 @@ INSERT INTO course VALUES ('数据库导论', '数据库导论不是四大礼包
 create table homework
 (
    homeworkID           int not null,
-   courseID             char(128) not null,
+   courseID             int not null,
    homeworkInfo         char(128),
    primary key (homeworkID)
 );
 
-INSERT INTO homework VALUES (1, '数据库导论', '数据库导论期中大作业');
-INSERT INTO homework VALUES (2, '编译原理', '编译原理Sysy编译器作业');
+INSERT INTO homework VALUES (1, 1, '数据库导论期中大作业');
+INSERT INTO homework VALUES (2, 2, '编译原理Sysy编译器作业');
 
 /*==============================================================*/
 /* Table: lecture                                               */
@@ -60,14 +61,14 @@ INSERT INTO homework VALUES (2, '编译原理', '编译原理Sysy编译器作业
 create table lecture
 (
    lectureID            int not null,
-   courseID             char(128) not null,
+   courseID             int not null,
    lectureInfo          char(128),
    primary key (lectureID)
 );
 
-INSERT INTO lecture VALUES (1, '数据库导论', '初级SQL语言');
-INSERT INTO lecture VALUES (2, '数据库导论', '高级SQL语言');
-INSERT INTO lecture VALUES (3, '数据库导论', 'ER图设计');
+INSERT INTO lecture VALUES (1, 1, '初级SQL语言');
+INSERT INTO lecture VALUES (2, 1, '高级SQL语言');
+INSERT INTO lecture VALUES (3, 1, 'ER图设计');
 
 /*==============================================================*/
 /* Table: submission                                            */
@@ -107,14 +108,14 @@ INSERT INTO user VALUES ('bluefairy', 'bluefairy', false);
 /*==============================================================*/
 create table userCourseRelationship
 (
-   courseID             char(128) not null,
-   userID               char(128) not null,
+   courseID             int not null,
+   userID               int not null,
    teacher              bool not null,
    primary key (courseID, userID)
 );
 
-INSERT INTO userCourseRelationship VALUES ('数据库导论', 'redfairy', false);
-INSERT INTO userCourseRelationship VALUES ('数据库导论', 'bluefairy', true);
+INSERT INTO userCourseRelationship VALUES (1, 'redfairy', false);
+INSERT INTO userCourseRelationship VALUES (1, 'bluefairy', true);
 
 alter table homework add constraint FK_courseOfHomework foreign key (courseID)
       references course (courseID) on delete restrict on update restrict;
