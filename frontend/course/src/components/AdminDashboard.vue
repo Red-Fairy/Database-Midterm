@@ -24,12 +24,21 @@
           <td>{{ course.courseInfo }}</td>
           <td>
             <button @click="deleteCourse(course.courseID)">删除课程</button>
+            <button>
+              <router-link :to="{
+                name: 'CourseDashboard',
+                params: { courseID: course.courseID },
+              }" class="btn btn-default">
+                进入课程
+              </router-link>
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 </template>
+
 
 
 <script>

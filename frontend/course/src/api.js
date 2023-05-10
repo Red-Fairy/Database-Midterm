@@ -26,14 +26,16 @@ export default {
     return response.data;
   },
 
-  async getCourses(permission) {
+  async getCourses(permission, userID) {
     const response = await api.get('/api/user/course', {
       params: {
         permission: permission,
+        userID: userID,
       },
     });
     return response.data;
   },
+  
   
   async createCourse(course) {
     const response = await api.post("/api/user/course", {

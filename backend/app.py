@@ -126,25 +126,44 @@ def user_get_course():
             return jsonify({"status":"200", "tabledata": result})
 
         else:
+            print('user_get_course', request.args.get("userID"))
             userID = rq.get('userID')
 
-            sql = ('select course.courseID, course.courseName, course.courseInfo, relation.teacher' \
-                   + 'from course as course, userCourseRelationship as relation' \
-                   + 'where relation.userID = "{0}" and relation.courseID = course.courseID').format(userID) 
-            data = db.session.execute(text(sql)).fetchall()
+            # 获取学生课程
+            student_sql = ('select course.courseID, course.courseName, course.courseInfo, relation.teacher '
+                        'from course as course, userCourseRelationship as relation '
+                        'where relation.userID = "{0}" and relation.courseID = course.courseID and relation.teacher = 0').format(userID)
+            student_data = db.session.execute(text(student_sql)).fetchall()
 
-            result = []
-            for i in range(len(data)):
+            # 获取教师课程
+            teacher_sql = ('select course.courseID, course.courseName, course.courseInfo, relation.teacher '
+                        'from course as course, userCourseRelationship as relation '
+                        'where relation.userID = "{0}" and relation.courseID = course.courseID and relation.teacher = 1').format(userID)
+            teacher_data = db.session.execute(text(teacher_sql)).fetchall()
+
+            student_result = []
+            teacher_result = []
+
+            for i in range(len(student_data)):
                 info = {
-                    'courseID': data[i][0],
-                    'courseName': data[i][1],
-                    'courseInfo': data[i][2],
-                    'coursePermission': data[i][3]
+                    'courseID': student_data[i][0],
+                    'courseName': student_data[i][1],
+                    'courseInfo': student_data[i][2],
+                    'coursePermission': student_data[i][3]
                 }
-                result.append(info)
-        
-            print('course_info', result)
-            return jsonify({"status":"200", "tabledata": result})
+                student_result.append(info)
+
+            for i in range(len(teacher_data)):
+                info = {
+                    'courseID': teacher_data[i][0],
+                    'courseName': teacher_data[i][1],
+                    'courseInfo': teacher_data[i][2],
+                    'coursePermission': teacher_data[i][3]
+                }
+                teacher_result.append(info)
+
+            return jsonify({"status": "200", "student_courses": student_result, "teacher_courses": teacher_result})
+
 
     if request.method == "POST":
         rq = request.get_json()

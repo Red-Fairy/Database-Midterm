@@ -42,6 +42,7 @@ export default {
           // 登录成功，保存 token 和 permission 到 localStorage
           localStorage.setItem('token', response.token);
           localStorage.setItem('permission', response.permission);
+          localStorage.setItem('userID', this.userid); // 将用户名存储到localStorage
 
           // 根据权限重定向到相应的页面
           if (response.permission) {
