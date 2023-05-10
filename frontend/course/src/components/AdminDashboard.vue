@@ -1,33 +1,29 @@
 <template>
-  <div class="admin-dashboard">
-    <h1>Admin Dashboard</h1>
-    <form @submit.prevent="createCourse">
-      <div>
-        <label for="courseID">Course ID:</label>
-        <input type="text" id="courseID" v-model="courseID" />
-      </div>
-      <div>
-        <label for="courseInfo">Course Name:</label>
-        <input type="text" id="courseInfo" v-model="courseInfo" />
-      </div>
-      <div>
-        <button type="submit">Create Course</button>
-      </div>
-    </form>
+  <div>
+    <h2>课程管理</h2>
+    <div class="new-course-form">
+      <h3>创建新课程</h3>
+      <input v-model="newCourse.courseID" placeholder="课程ID" />
+      <input v-model="newCourse.courseName" placeholder="课程名称" />
+      <input v-model="newCourse.courseInfo" placeholder="课程信息" />
+      <button @click="createCourse">创建课程</button>
+    </div>
     <table>
       <thead>
         <tr>
-          <th>Course ID</th>
-          <th>Course Name</th>
+          <th>课程ID</th>
+          <th>课程名称</th>
+          <th>课程信息</th>
+          <th>操作</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="course in courses" :key="course.courseID">
           <td>{{ course.courseID }}</td>
+          <td>{{ course.courseName }}</td>
+          <td>{{ course.courseInfo }}</td>
           <td>
-            <router-link :to="{ name: 'CourseDashboard', params: { courseID: course.courseID } }">
-              {{ course.courseInfo }}
-            </router-link>
+            <button @click="deleteCourse(course.courseID)">删除课程</button>
           </td>
         </tr>
       </tbody>
@@ -35,26 +31,60 @@
   </div>
 </template>
 
+
 <script>
-import api from '@/api';
+import api from "@/api.js";
 
 export default {
   data() {
     return {
+      newCourse: {
+        courseID: "",
+        courseName: "",
+        courseInfo: "",
+      },
       courses: [],
     };
   },
-  async created() {
-    try {
-      const response = await api.getCourses(/* provide necessary parameters here */);
-      if (response.status === '200') {
-        this.courses = response.tabledata;
-      } else {
-        // Handle error case
+  methods: {
+    async createCourse() {
+      if (
+        this.newCourse.courseID &&
+        this.newCourse.courseName &&
+        this.newCourse.courseInfo
+      ) {
+        const response = await api.createCourse(this.newCourse);
+        if (response.status === "200") {
+          this.courses.push(this.newCourse);
+          this.newCourse = {
+            courseID: "",
+            courseName: "",
+            courseInfo: "",
+          };
+        } else {
+          // Handle error
+        }
       }
-    } catch (error) {
-      console.error('Error fetching courses:', error);
+    },
+    async deleteCourse(courseID) {
+      if (confirm("确定要删除这个课程吗？")) {
+        const response = await api.deleteCourse(courseID);
+        if (response.status === "200") {
+          this.courses = this.courses.filter((course) => course.courseID !== courseID);
+        } else {
+          // Handle error
+        }
+      }
+    },
+  },
+  async mounted() {
+    const response = await api.getCourses('admin');
+    if (response.status === "200") {
+      this.courses = response.tabledata;
+    } else {
+      // Handle error
     }
   },
 };
 </script>
+

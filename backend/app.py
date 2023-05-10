@@ -104,10 +104,12 @@ def register():
 @app.route("/api/user/course", methods=["GET", "POST", "ADD", "DELETE"])
 @cross_origin()
 def user_get_course():
-    rq = request.json
+    print("Request Method:", request.method)  # 添加调试信息
+    print('user_get_course', request.args.get("permission"))
     if request.method == "GET":
+        rq = request.args
         permission = rq.get("permission")
-        if permission == True:
+        if permission == 'admin':
             sql = 'select * from course'
             data = db.session.execute(text(sql)).fetchall()
             result = []
@@ -145,6 +147,7 @@ def user_get_course():
             return jsonify({"status":"200", "tabledata": result})
 
     if request.method == "POST":
+        rq = request.get_json()
         permission = rq.get("permission")
         userID = rq.get("userID")
         courseID = rq.get("courseID")
@@ -168,6 +171,7 @@ def user_get_course():
 
         return jsonify({"status":"200", "msg": "修改成功"})
     if request.method == "ADD":
+        rq = request.get_json()
         permission = rq.get("permission")
         if permission != True:
             return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
@@ -183,6 +187,7 @@ def user_get_course():
         return jsonify({"status":"200", "msg": "修改成功"})
 
     if request.method == "DELETE":
+        rq = request.get_json()
         permission = rq.get("permission")
         if permission != True:
             return jsonify({"status": "1000", "msg": "没有修改课程的权限"})

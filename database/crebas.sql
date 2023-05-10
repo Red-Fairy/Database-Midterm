@@ -109,7 +109,7 @@ INSERT INTO user VALUES ('bluefairy', 'bluefairy', false);
 create table userCourseRelationship
 (
    courseID             int not null,
-   userID               int not null,
+   userID               char(128) not null,
    teacher              bool not null,
    primary key (courseID, userID)
 );
