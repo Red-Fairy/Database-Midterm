@@ -31,10 +31,10 @@ const routes = [
     component: UserDashboard,
   },
   {
-    path: '/course',
+    path: '/course/:courseID',
     name: 'CourseDashboard',
-    component: CourseDashboard,
-  },
+    component: CourseDashboard
+  }
 ];
 
 const router = createRouter({
