@@ -3,7 +3,6 @@ import LogIn from '../components/LogIn.vue';
 import Register from '../components/UserRegister.vue';
 import AdminDashboard from '../components/AdminDashboard.vue';
 import UserDashboard from '../components/UserDashboard.vue';
-import CourseDashboard from '../components/CourseDashboard.vue';
 import TeacherCourse from '../components/TeacherCourse.vue';
 import AdminCourse from "@/components/AdminCourse.vue";
 import TeacherAssignment from '@/components/TeacherAssignment.vue';
@@ -35,11 +34,6 @@ const routes = [
     name: 'UserDashboard',
     component: UserDashboard,
   },
-  {
-    path: '/course/:courseID',
-    name: 'CourseDashboard',
-    component: CourseDashboard
-  },  
   {
     path: "/admin/course/:courseID",
     name: "AdminCourse",
