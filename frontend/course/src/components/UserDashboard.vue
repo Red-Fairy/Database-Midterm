@@ -15,7 +15,7 @@
           <td>{{ course.courseName }}</td>
           <td>
             <button>
-              <router-link :to="{ name: 'CourseDashboard', params: { courseID: course.courseID } }">
+              <router-link :to="{ name: 'StudentCourse', params: { courseID: course.courseID, userID: userID } }">
                 进入课程
               </router-link>
             </button>
@@ -38,7 +38,7 @@
           <td>{{ course.courseName }}</td>
           <td>
             <button>
-              <router-link :to="{ name: 'CourseDashboard', params: { courseID: course.courseID } }">
+              <router-link :to="{ name: 'TeacherCourse', params: { courseID: course.courseID, userID: userID } }">
                 进入课程
               </router-link>
             </button>
@@ -57,17 +57,16 @@ export default {
   name: 'ComponentName',
   data() {
     return {
+      userID: '',
       student_courses: [],
       teacher_courses: [],
     };
   },
   async mounted() {
     const userID = localStorage.getItem('userID'); // 从 localStorage 获取 userID
-    console.log(userID);
+    this.userID = userID;
     const response = await api.getCourses('user', userID);
     if (response.status === "200") {
-      console.log(response.student_courses);
-      console.log(response.teacher_courses);
       this.student_courses = response.student_courses;
       this.teacher_courses = response.teacher_courses;
     } else {

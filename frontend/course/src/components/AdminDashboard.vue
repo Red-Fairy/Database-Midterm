@@ -8,6 +8,7 @@
       <input v-model="newCourse.courseInfo" placeholder="课程信息" />
       <button @click="createCourse">创建课程</button>
     </div>
+    <div v-if="error" class="error">{{ error }}</div>
     <table>
       <thead>
         <tr>
@@ -26,7 +27,7 @@
             <button @click="deleteCourse(course.courseID)">删除课程</button>
             <button>
               <router-link :to="{
-                name: 'CourseDashboard',
+                name: 'AdminCourse',
                 params: { courseID: course.courseID },
               }" class="btn btn-default">
                 进入课程
@@ -53,6 +54,7 @@ export default {
         courseInfo: "",
       },
       courses: [],
+      error: "", // 添加这一行
     };
   },
   methods: {
@@ -70,8 +72,9 @@ export default {
             courseName: "",
             courseInfo: "",
           };
+          this.error = ""; // 清除错误
         } else {
-          // Handle error
+          this.error = "创建课程失败";
         }
       }
     },
@@ -80,8 +83,9 @@ export default {
         const response = await api.deleteCourse(courseID);
         if (response.status === "200") {
           this.courses = this.courses.filter((course) => course.courseID !== courseID);
+          this.error = ""; // 清除错误
         } else {
-          // Handle error
+          this.error = "删除课程失败";
         }
       }
     },

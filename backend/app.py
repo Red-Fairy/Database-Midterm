@@ -4,6 +4,8 @@
 # Author: Yuyang Zhou
 # E-Mail: zhouyuyangmike@foxmail.com
 
+from flask_cors import cross_origin
+from flask_cors import CORS
 import MySQLdb
 from flask import Flask, jsonify, request
 from config import *
@@ -18,11 +20,10 @@ from utils import *
 import re
 
 # 创建redis对象
-redis_store = StrictRedis(host=Config.REDIS_HOST, port=Config.REDIS_PORT, decode_responses=True)
+redis_store = StrictRedis(host=Config.REDIS_HOST,
+                          port=Config.REDIS_PORT, decode_responses=True)
 
 # 跨域
-from flask_cors import CORS
-from flask_cors import cross_origin
 
 app = Flask(__name__)
 CORS(app)
@@ -40,6 +41,8 @@ with app.app_context():
         print(rs.fetchone())
 
 # 用户登录
+
+
 @app.route("/api/user/login", methods=["POST"])
 @cross_origin()
 def user_login():
@@ -55,8 +58,8 @@ def user_login():
     if not re.search(PASSWORD_REGEX, password):
         return jsonify({"code": 1000, "msg": "密码不合规范"})
 
-    sql = ('select * ' \
-           + 'from user ' \
+    sql = ('select * '
+           + 'from user '
            + 'where userID = "{0}" and password = "{1}"').format(userid, password)
     data = db.session.execute(text(sql)).first()
     print('user_login_data', data)
@@ -88,18 +91,19 @@ def register():
     if not re.search(PASSWORD_REGEX, password):
         return jsonify({"status": "1000", "msg": "密码不合规范"})
 
-    sql = ('select * ' \
-           + 'from user ' \
+    sql = ('select * '
+           + 'from user '
            + 'where userID = "{0}"').format(username)
     data = db.session.execute(text(sql)).fetchall()
     if not data:
-        sql = ('insert into user(userID, password, superManager) ' \
+        sql = ('insert into user(userID, password, superManager) '
                + 'value ("{0}", "{1}", False)').format(username, password)
         db.session.execute(text(sql))
         db.session.commit()
         return jsonify({"status": "200", "msg": "注册成功"})
     else:
         return jsonify({"status": "1000", "msg": "该用户已存在"})
+
 
 @app.route("/api/user/course", methods=["GET", "POST", "ADD", "DELETE"])
 @cross_origin()
@@ -121,9 +125,9 @@ def user_get_course():
                     'coursePermission': True
                 }
                 result.append(info)
-        
+
             print('course_info', result)
-            return jsonify({"status":"200", "tabledata": result})
+            return jsonify({"status": "200", "tabledata": result})
 
         else:
             print('user_get_course', request.args.get("userID"))
@@ -131,14 +135,14 @@ def user_get_course():
 
             # 获取学生课程
             student_sql = ('select course.courseID, course.courseName, course.courseInfo, relation.teacher '
-                        'from course as course, userCourseRelationship as relation '
-                        'where relation.userID = "{0}" and relation.courseID = course.courseID and relation.teacher = 0').format(userID)
+                           'from course as course, userCourseRelationship as relation '
+                           'where relation.userID = "{0}" and relation.courseID = course.courseID and relation.teacher = 0').format(userID)
             student_data = db.session.execute(text(student_sql)).fetchall()
 
             # 获取教师课程
             teacher_sql = ('select course.courseID, course.courseName, course.courseInfo, relation.teacher '
-                        'from course as course, userCourseRelationship as relation '
-                        'where relation.userID = "{0}" and relation.courseID = course.courseID and relation.teacher = 1').format(userID)
+                           'from course as course, userCourseRelationship as relation '
+                           'where relation.userID = "{0}" and relation.courseID = course.courseID and relation.teacher = 1').format(userID)
             teacher_data = db.session.execute(text(teacher_sql)).fetchall()
 
             student_result = []
@@ -164,121 +168,128 @@ def user_get_course():
 
             return jsonify({"status": "200", "student_courses": student_result, "teacher_courses": teacher_result})
 
-
     if request.method == "POST":
-        rq = request.get_json()
-        permission = rq.get("permission")
-        userID = rq.get("userID")
-        courseID = rq.get("courseID")
-        if permission != True:
-            sql = ('select *' \
-                   + 'from userCourseRelationship' \
-                   + 'where userID = "{0}" and courseID = {1}').format(userID, courseID)
 
-            data = db.session.execute(text(sql)).first()
-            if data == None:
-                return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
-            if data[2] != True:
-                return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
-
-        courseInfo = rq.get("courseInfo")
-        sql = ('update course ' \
-              + 'set courseInfo = "{0}" ' \
-              + 'where courseID = {1}').format(courseInfo, courseID)
-        db.session.execute(text(sql))
-        db.session.commit()
-
-        return jsonify({"status":"200", "msg": "修改成功"})
-    if request.method == "ADD":
         rq = request.get_json()
         permission = rq.get("permission")
         if permission != True:
             return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
+        
+        if rq.get("method") == "ADD":
 
-        courseID = rq.get("courseID")
-        courseName = rq.get("courseName")
-        courseInfo = rq.get("courseInfo")
-        sql = ('insert course(courseID, courseName, courseInfo) ' \
-              + 'value({0}, "{1}", "{2}")').format(courseID, courseName, courseInfo)
-        db.session.execute(text(sql))
-        db.session.commit()
+            courseID = rq.get("courseID")
+            courseName = rq.get("courseName")
+            courseInfo = rq.get("courseInfo")
+            # check if cannot insert
+            sql = ('select * from course where courseID = {0}').format(courseID)
+            data = db.session.execute(text(sql)).fetchall()
+            if data:
+                return jsonify({"status": "1000", "msg": "课程ID已存在"})
+            
+            sql = ('insert course(courseID, courseName, courseInfo) '
+                + 'value({0}, "{1}", "{2}")').format(courseID, courseName, courseInfo)
+            db.session.execute(text(sql))
+            db.session.commit()
 
-        return jsonify({"status":"200", "msg": "修改成功"})
+            return jsonify({"status": "200", "msg": "修改成功"})
+        
+        elif rq.get("method") == "DELETE":
+            courseID = rq.get("courseID")
+            sql = ('delete from course '
+                + 'where courseID = {0}').format(courseID)
+            db.session.execute(text(sql))
+            db.session.commit()
 
-    if request.method == "DELETE":
-        rq = request.get_json()
-        permission = rq.get("permission")
-        if permission != True:
-            return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
+            return jsonify({"status": "200", "msg": "修改成功"})
+        
+        else:
+            return jsonify({"status": "1000", "msg": "method参数错误"})
 
-        courseID = rq.get("courseID")
-        sql = ('delete from course ' \
-              + 'where courseID = {0}').format(courseID)
-        db.session.execute(text(sql))
-        db.session.commit()
-
-        return jsonify({"status":"200", "msg": "修改成功"})
 
 # 超管编辑 用户<-->课程关系
-@app.route("/api/user/user_course", methods=["POST", "ADD", "DELETE"])
+@app.route("/api/user/user_course", methods=["GET", "POST"])
 @cross_origin()
 def user_get_user_course():
-    rq = request.json
+    print("user get user course")
+    
+    print("Request Method:", request.method)  # 添加调试信息
+    if request.method == "GET":
+        course_id = request.args.get("courseID")
+
+        # 获取教师信息
+        teacher_sql = ('select userID from userCourseRelationship '
+                       'where courseID = {0} and teacher = 1').format(course_id)
+        teacher_data = db.session.execute(text(teacher_sql)).fetchall()
+
+        # 获取学生信息
+        student_sql = ('select userID from userCourseRelationship '
+                       'where courseID = {0} and teacher = 0').format(course_id)
+        student_data = db.session.execute(text(student_sql)).fetchall()
+
+        teacher_list = [row[0] for row in teacher_data]
+        student_list = [row[0] for row in student_data]
+
+        # 获取courseName和courseInfo
+        course_sql = ('select courseName, courseInfo from course '
+                        'where courseID = {0}').format(course_id)
+        course_data = db.session.execute(text(course_sql)).fetchall()
+        course_name = course_data[0][0]
+        course_info = course_data[0][1]
+
+        return jsonify({"status": "200", "courseName": course_name, "courseInfo": course_info, "teachers": teacher_list, "students": student_list})
+
     if request.method == "POST":
+        rq = request.json
         permission = rq.get("permission")
         if permission != True:
             return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
+        
+        method = rq.get("method")
+        if method == "ADD":
+            courseID = rq.get("courseID")
+            userID = rq.get("userID")
+            teacher = rq.get("teacher")
+            # check if cannot insert
+            sql = ('select * from userCourseRelationship where courseID = {0} and userID = "{1}"').format(courseID, userID)
+            data = db.session.execute(text(sql)).fetchall()
+            if data:
+                return jsonify({"status": "1000", "msg": "用户已存在"})
+            # check if not a user
+            sql = ('select * from user where userID = "{0}"').format(userID)
+            data = db.session.execute(text(sql)).fetchall()
+            if not data:
+                return jsonify({"status": "1000", "msg": "用户不存在"})
+            sql = ('insert userCourseRelationship(courseID, userID, teacher) '
+                 'value({1}, "{2}", {0})').format(teacher, courseID, userID)
+            db.session.execute(text(sql))
+            db.session.commit()
 
-        courseID = rq.get("courseID")
-        userID = rq.get("userID")
-        teacher = rq.get("teacher")
-        sql = ('update userCourseRelationship ' \
-              + 'set teacher = {0} ' \
-              + 'where courseID = {1} and userID = "{2}"').format(teacher, courseID, userID)
-        db.session.execute(text(sql))
-        db.session.commit()
+            return jsonify({"status": "200", "msg": "修改成功"})
+        
+        elif method == "DELETE":
+            courseID = rq.get("courseID")
+            userID = rq.get("userID")
+            sql = ('delete from userCourseRelationship '
+                 'where courseID = {0} and userID = "{1}"').format(courseID, userID)
+            print(sql)
+            db.session.execute(text(sql))
+            db.session.commit()
 
-        return jsonify({"status":"200", "msg": "修改成功"})
-    if request.method == "ADD":
-        permission = rq.get("permission")
-        if permission != True:
-            return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
+            return jsonify({"status": "200", "msg": "修改成功"})
+        
+        else:
+            return jsonify({"status": "1000", "msg": "method参数错误"})
 
-        courseID = rq.get("courseID")
-        userID = rq.get("userID")
-        teacher = rq.get("teacher")
-        sql = ('insert userCourseRelationship(courseID, userID, teacher) ' \
-              + 'value({1}, "{2}", {0})').format(teacher, courseID, userID)
-        db.session.execute(text(sql))
-        db.session.commit()
 
-        return jsonify({"status":"200", "msg": "修改成功"})
-
-    if request.method == "DELETE":
-        permission = rq.get("permission")
-        if permission != True:
-            return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
-
-        courseID = rq.get("courseID")
-        userID = rq.get("userID")
-        sql = ('delete from userCourseRelationship ' \
-              + 'where courseID = {0} and userID = "{1}")').format(courseID, userID)
-        db.session.execute(text(sql))
-        db.session.commit()
-
-        return jsonify({"status":"200", "msg": "修改成功"})
-
-@app.route("/api/user/lecture", methods=["GET", "POST", "ADD", "DELETE"])
+@app.route("/api/user/lecture", methods=["GET", "POST"])
 @cross_origin()
 def user_get_lecture():
-    rq = request.json
-    
+    print("Lecture, Request Method:", request.method)  # 添加调试信息
     if request.method == "GET":
-        courseID = rq.get('courseID')
-        lecture = rq.get('lecture')
-        sql = ('select *' \
-               + 'from lecture' \
-               + 'where courseID = {0}').format(courseID) 
+        courseID = request.args.get("courseID")
+        sql = ('select * '
+               'from lecture '
+               'where courseID = {0}').format(courseID)
         data = db.session.execute(text(sql)).fetchall()
 
         result = []
@@ -288,150 +299,169 @@ def user_get_lecture():
                 'lectureInfo': data[i][2]
             }
             result.append(info)
-        
+
         print('lecture_info', result)
-        return jsonify({"status":"200", "tabledata": result})
+        return jsonify({"status": "200", "tabledata": result})
 
     if request.method == "POST":
-        # 不允许修改课时所属的课程
-        # 修改的话会有很多恶心的问题
+        rq = request.json
         permission = rq.get("permission")
         if permission != True:
             return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
+        
+        method = rq.get("method")
+        if method == 'ADD':
+            lectureInfo = rq.get("lectureInfo")
+            lectureID = rq.get("lectureID")
+            courseID = rq.get("courseID")
+            print(lectureInfo, lectureID, courseID)
+            # check if cannot insert
+            sql = ('select * from lecture where lectureID = {0} and courseID = {1}').format(lectureID, courseID)
+            data = db.session.execute(text(sql)).fetchall()
+            if data:
+                return jsonify({"status": "1000", "msg": "课时ID已存在"})
+            sql = ('insert lecture(lectureID, courseID, lectureInfo) '
+                + 'value({0}, {1}, "{2}")').format(lectureID, courseID, lectureInfo)
+            db.session.execute(text(sql))
+            db.session.commit()
 
-        lectureID = rq.get("lectureID")
-        lectureInfo = rq.get("lectureInfo")
-        sql = ('update lecture ' \
-              + 'set lectureInfo = "{0}" ' \
-              + 'where lectureID = "{1}"').format(lectureInfo, lectureID)
-        db.session.execute(text(sql))
-        db.session.commit()
+            return jsonify({"status": "200", "msg": "修改成功"})
+        
+        elif method == 'UPDATE':
+            courseID = rq.get("courseID")
+            lectureID = rq.get("lectureID")
+            lectureInfo = rq.get("lectureInfo")
+            # check if cannot insert, (courseID and lectureID) is primary key
+            sql = ('select * from lecture where lectureID = {0} and courseID = {1}').format(lectureID, courseID)
+            data = db.session.execute(text(sql)).fetchall()
+            if not data:
+                return jsonify({"status": "1000", "msg": "课时不存在"})
+            
+            sql = ('update lecture '
+                + 'set lectureInfo = "{0}" '
+                + 'where lectureID = {1} and courseID = {2}').format(lectureInfo, lectureID, courseID)
+            db.session.execute(text(sql))
+            db.session.commit()
 
-        return jsonify({"status":"200", "msg": "修改成功"})
-    if request.method == "ADD":
-        permission = rq.get("permission")
-        if permission != True:
-            return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
+            return jsonify({"status": "200", "msg": "修改成功"})
 
-        courseID = rq.get('courseID')
-        lectureID = rq.get("lectureID")
-        lectureInfo = rq.get("lectureInfo")
-        sql = ('insert lecture(lectureID, courseID, lectureInfo) ' \
-              + 'value({0}, {1}, "{2}")').format(lectureID, courseID, lectureInfo)
-        db.session.execute(text(sql))
-        db.session.commit()
+        elif method == 'DELETE':
+            courseID = rq.get("courseID")
+            lectureID = rq.get("lectureID")
+            sql = ('delete from lecture '
+                + 'where lectureID = {0} and courseID = {1}').format(lectureID, courseID)
+            db.session.execute(text(sql))
+            db.session.commit()
 
-        return jsonify({"status":"200", "msg": "修改成功"})
+            return jsonify({"status": "200", "msg": "修改成功"})
 
-    if request.method == "DELETE":
-        permission = rq.get("permission")
-        if permission != True:
-            return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
 
-        lectureID = rq.get("lectureID")
-        sql = ('delete from lecture ' \
-              + 'where lectureID = {0}').format(lectureID)
-        db.session.execute(text(sql))
-        db.session.commit()
-
-        return jsonify({"status":"200", "msg": "修改成功"})
-
-@app.route("/api/user/homework", methods=["GET", "POST", "ADD", "DELETE"])
+@app.route("/api/user/assignment", methods=["GET", "POST"])
 @cross_origin()
-def user_get_homework():
-    rq = request.json
-    
+def user_get_assignment():
     if request.method == "GET":
-        courseID = rq.get('courseID')
-        sql = ('select *' \
-               + 'from homework' \
-               + 'where courseID = {0}').format(courseID) 
+        courseID = request.args.get("courseID")
+        sql = ('select * '
+               'from assignment '
+               'where courseID = {0}').format(courseID)
         data = db.session.execute(text(sql)).fetchall()
 
         result = []
         for i in range(len(data)):
             info = {
-                'homeworkID': data[i][0],
-                'homeworkInfo': data[i][2]
+                'assignmentID': data[i][0],
+                'assignmentInfo': data[i][2]
             }
             result.append(info)
-        
-        return jsonify({"status":"200", "tabledata": result})
+
+        return jsonify({"status": "200", "tabledata": result})
 
     if request.method == "POST":
+        rq = request.json
+        method = rq.get("method")
+        if method == 'ADD':
+            assignmentID = rq.get("assignmentID")
+            courseID = rq.get("courseID")
+            assignmentInfo = rq.get("assignmentInfo")
+            # check if cannot insert, (courseID and assignmentID) is primary key
+            sql = ('select * from assignment where assignmentID = {0} and courseID = {1}').format(assignmentID, courseID)
+            data = db.session.execute(text(sql)).fetchall()
+            if data:
+                return jsonify({"status": "1000", "msg": "作业ID已存在"})
+            sql = ('insert assignment(assignmentID, courseID, assignmentInfo) '
+                + 'value({0}, {1}, "{2}")').format(assignmentID, courseID, assignmentInfo)
+            db.session.execute(text(sql))
+            db.session.commit()
 
-        homeworkID = rq.get("homeworkID")
-        homeworkInfo = rq.get("homeworkInfo")
-        sql = ('update homework ' \
-              + 'set homeworkInfo = "{0}" ' \
-              + 'where homeworkID = {1}').format(homeworkInfo, homeworkID)
-        db.session.execute(text(sql))
-        db.session.commit()
+            return jsonify({"status": "200", "msg": "修改成功"})
+        
+        elif method == 'UPDATE':
+            assignmentID = rq.get("assignmentID")
+            courseID = rq.get("courseID")
+            assignmentInfo = rq.get("assignmentInfo")
+            # check if cannot insert, assignmentID is primary key
+            sql = ('select * from assignment where assignmentID = {0} and courseID = {1}').format(assignmentID, courseID)
+            data = db.session.execute(text(sql)).fetchall()
+            if not data:
+                return jsonify({"status": "1000", "msg": "作业不存在"})
+            sql = ('update assignment '
+                + 'set assignmentInfo = "{0}" '
+                + 'where assignmentID = {1} and courseID = {2}').format(assignmentInfo, assignmentID, courseID)
+            db.session.execute(text(sql))
+            db.session.commit()
 
-        return jsonify({"status":"200", "msg": "修改成功"})
-    if request.method == "ADD":
-        permission = rq.get("permission")
-        if permission != True:
-            return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
+            return jsonify({"status": "200", "msg": "修改成功"})
+        
+        elif method == 'DELETE':
+            assignmentID = rq.get("assignmentID")
+            courseID = rq.get("courseID")
+            sql = ('delete from assignment '
+                + 'where assignmentID = {0} and courseID = {1}').format(assignmentID, courseID)
+            db.session.execute(text(sql))
+            db.session.commit()
 
-        homeworkID = rq.get('homeworkID')
-        lectureID = rq.get("lectureID")
-        homeworkInfo = rq.get("homeworkInfo")
-        sql = ('insert lecture(homeworkID, lectureID, homeworkInfo) ' \
-              + 'value({0}, {1}, "{2}")').format(homeworkID, lectureID, homeworkInfo)
-        db.session.execute(text(sql))
-        db.session.commit()
+            return jsonify({"status": "200", "msg": "修改成功"})
 
-        return jsonify({"status":"200", "msg": "修改成功"})
-
-    if request.method == "DELETE":
-        permission = rq.get("permission")
-        if permission != True:
-            return jsonify({"status": "1000", "msg": "没有修改课程的权限"})
-
-        lectureID = rq.get("homeworkID")
-        sql = ('delete from homework ' \
-              + 'where homeworkID = {0}').format(homeworkID)
-        db.session.execute(text(sql))
-        db.session.commit()
-
-        return jsonify({"status":"200", "msg": "修改成功"})
-
-@app.route("/api/user/submission", methods=["GET", "ADD"])
+@app.route("/api/user/submission", methods=["POST"])
 @cross_origin()
 def user_get_submission():
     rq = request.json
-    
-    if request.method == "GET":
+    method = rq.get("method")
+
+    if method == "GET":
         # 查询提交记录
         # (case1)自己不拥有权限所有提交记录
         # (case2)自己拥有权限的课程作业的所有提交记录
+        permission = rq.get('permission')
+        print(permission)
         if not permission:
-            homeworkID = rq.get('homeworkID')
+            assignmentID = rq.get('assignmentID')
             userID = rq.get('userID')
-            sql = ('select *' \
-                   + 'from submission' \
-                   + 'where homeworkID = {0} and userID = "{1}"').format(homeworkID, userID) 
+            courseID = rq.get('courseID')
+            sql = ('select * '
+                   'from submission '
+                   'where assignmentID = {0} and userID = "{1}" and courseID = {2}').format(assignmentID, userID, courseID)
             data = db.session.execute(text(sql)).fetchall()
 
             result = []
             for i in range(len(data)):
                 info = {
-                    'submissionID' : data[i][0],
-                    'submissionInfo' : data[i][3],
-                    'submissionScore' : data[i][4]
+                    'submissionID': data[i][0],
+                    'submissionInfo': data[i][4],
+                    'submissionScore': data[i][5]
                 }
                 result.append(info)
 
-            print('homework_info', result)
-            return jsonify({"status":"200", "tabledata": result})
+            print('assignment_info', result)
+            return jsonify({"status": "200", "tabledata": result})
 
         else:
-            homeworkID = rq.get('homeworkID')
-            userID = rq.get('userID')
-            sql = ('select *' \
-                   + 'from submission' \
-                   + 'where homeworkID = {0} ').format(homeworkID) 
+            assignmentID = rq.get('assignmentID')
+            courseID = rq.get('courseID')
+            # primary key: (assignmentID, courseID)
+            sql = ('select * '
+                    'from submission '
+                    'where assignmentID = {0} and courseID = {1}').format(assignmentID, courseID)
             data = db.session.execute(text(sql)).fetchall()
 
             result = []
@@ -439,66 +469,76 @@ def user_get_submission():
                 info = {
                     'submissionID': data[i][0],
                     'userID': data[i][1],
-                    'submissionInfo': data[i][3],
-                    'submissionScore': data[i][4]
+                    'submissionInfo': data[i][4],
+                    'submissionScore': data[i][5]
                 }
                 result.append(info)
-            
-            print('homework_info', result)
-            return jsonify({"status":"200", "tabledata": result})
 
-    if request.method == "POST":
-        # 不允许修改课时所属的课程
-        # 修改的话会有很多恶心的问题
+            print('assignment_info', result)
+            return jsonify({"status": "200", "tabledata": result})
+
+    elif method == "UPDATE":
         permission = rq.get("permission")
         if permission != True:
             return jsonify({"status": "1000", "msg": "没有作业评分的权限"})
 
         submissionID = rq.get("submissionID")
-        submissionScore = rq.get("submissionScore")
+        submissionScore = rq.get("score")
+        submissionScore = int(submissionScore)
         if submissionScore < 0 or submissionScore > 100:
             return jsonify({"status": "1000", "msg": "评分需要落在 [0,100] 范围内"})
-        sql = ('update submission ' \
-              + 'set submissionScore = "{0}" ' \
-              + 'where submissionID = {1}').format(submissionScore, submissionID)
+        sql = ('update submission '
+               + 'set submissionScore = "{0}" '
+               + 'where submissionID = {1}').format(submissionScore, submissionID)
         db.session.execute(text(sql))
         db.session.commit()
 
-        return jsonify({"status":"200", "msg": "修改成功"})
+        return jsonify({"status": "200", "msg": "修改成功"})
 
-    if request.method == "ADD":
+    elif method == "SUBMIT":
         permission = rq.get("permission")
         if permission != True:
             return jsonify({"status": "1000", "msg": "没有提交作业的权限"})
 
-        submissionID = rq.get('submissionID')
         userID = rq.get('userID')
-        lectureID = rq.get("lectureID")
+        courseID = rq.get('courseID')
+        assignmentID = rq.get('assignmentID')
         submissionInfo = rq.get("submissionInfo")
-        sql = ('insert subission(submissionID, userID, lectureID, submissionInfo, submissionScore) ' \
-              + 'value({0}, "{1}", {2}, "{3}", Null)').format(submissionID, userID, lectureID, submissionInfo)
+
+        sql = ('insert submission (userID, assignmentID, courseID, submissionInfo) '
+               'value("{0}", {1}, {2}, "{3}")').format(userID, assignmentID, courseID, submissionInfo)
         db.session.execute(text(sql))
         db.session.commit()
-        return jsonify({"status":"200", "msg": "修改成功"})
+        # get the submissionID
+        sql = ('select submissionID '
+                'from submission '
+                'where userID = "{0}" and assignmentID = {1} and courseID = {2} and submissionInfo = "{3}"').format(userID, assignmentID, courseID, submissionInfo)
+        data = db.session.execute(text(sql)).fetchall()
+        submissionID = data[0][0]
+        print('submissionID', submissionID)
+        return jsonify({"status": "200", "msg": "修改成功", "submissionID": submissionID})
+    
+    else:
+        return jsonify({"status": "1000", "msg": "method error"})
 
 
 @app.route("/api/user/pwd_chg", methods=["POST"])
 @cross_origin()
 def user_pwd_chg():
     rq = request.json
-    if request.method=='POST':
+    if request.method == 'POST':
         userID = rq.get('userID')
         password = rq.get('password')
         new_password = rq.get('new_password')
-        sql = ('select * ' \
-              + 'from user ' \
-              + ' where userID = "{0}" and password = "{1}"').format(userID, password)
+        sql = ('select * '
+               + 'from user '
+               + ' where userID = "{0}" and password = "{1}"').format(userID, password)
         data = db.session.execute(text(sql)).fetchall()
         if not data:
-            return jsonify(status=1000,msg="原始密码错误")
+            return jsonify(status=1000, msg="原始密码错误")
         else:
-            sql = ('update user set password = "{0}"' \
-                  + 'where userID = "{1}"').format(userID, new_password)
+            sql = ('update user set password = "{0}"'
+                   + 'where userID = "{1}"').format(userID, new_password)
             db.session.execute(text(sql))
             db.session.commit()
-            return jsonify(status=200,msg="修改成功")
+            return jsonify(status=200, msg="修改成功")
