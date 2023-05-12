@@ -439,6 +439,13 @@ def user_get_submission():
             userID = rq.get('userID')
             courseID = rq.get('courseID')
             sql = ('select * '
+                   'from assignment '
+                   'where assignmentID = {0} and courseID = {1}').format(assignmentID, courseID)
+            data = db.session.execute(text(sql)).fetchall()
+            if not data:
+                return jsonify({"status": "1000", "msg": "作业与课程不匹配"})
+            
+            sql = ('select * '
                    'from submission '
                    'where assignmentID = {0} and userID = "{1}" and courseID = {2}').format(assignmentID, userID, courseID)
             data = db.session.execute(text(sql)).fetchall()
@@ -459,6 +466,12 @@ def user_get_submission():
             assignmentID = rq.get('assignmentID')
             courseID = rq.get('courseID')
             # primary key: (assignmentID, courseID)
+            sql = ('select * '
+                   'from assignment '
+                   'where assignmentID = {0} and courseID = {1}').format(assignmentID, courseID)
+            data = db.session.execute(text(sql)).fetchall()
+            if not data:
+                return jsonify({"status": "1000", "msg": "作业与课程不匹配"})
             sql = ('select * '
                     'from submission '
                     'where assignmentID = {0} and courseID = {1}').format(assignmentID, courseID)
@@ -504,6 +517,19 @@ def user_get_submission():
         courseID = rq.get('courseID')
         assignmentID = rq.get('assignmentID')
         submissionInfo = rq.get("submissionInfo")
+        sql = ('select * '
+               'from assignment '
+               'where assignmentID = {0} and courseID = {1}').format(assignmentID, courseID)
+        data = db.session.execute(text(sql)).fetchall()
+        if not data:
+            return jsonify({"status": "1000", "msg": "作业与课程不匹配"})
+        
+        sql = ('select * '
+               'from userCourseRelationship '
+               'where userID = {0} and courseID = {1}').format(userID, courseID)
+        data = db.session.execute(text(sql)).fetchall()
+        if not data:
+            return jsonify({"status": "1000", "msg": "用户与课程不匹配"})
 
         sql = ('insert submission (userID, assignmentID, courseID, submissionInfo) '
                'value("{0}", {1}, {2}, "{3}")').format(userID, assignmentID, courseID, submissionInfo)
