@@ -1,7 +1,8 @@
 <template>
-    <div>
+    <div class="centered-container">
         <h1>{{ courseName }}</h1>
         <p>{{ courseInfo }}</p>
+
         <div v-if="error" class="error">{{ error }}</div>
         <h2>Teachers</h2>
         <table>
@@ -40,6 +41,11 @@
                 </tr>
             </tbody>
         </table>
+        <button>
+            <router-link :to="{ name: 'AdminDashboard' }" class="btn btn-default">
+                返回主页
+            </router-link>
+        </button>
     </div>
 </template>
   
@@ -117,7 +123,15 @@ table {
     border-collapse: collapse;
     margin-bottom: 20px;
 }
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
+table {
+  margin-top: 5px;
+}
 th,
 td {
     border: 1px solid black;

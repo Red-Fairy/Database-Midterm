@@ -10,11 +10,9 @@
         <label for="password">Password:</label>
         <input type="password" id="password" v-model="password" />
       </div>
-      <div>
+      <div class="button-container">
         <button type="submit">Login</button>
-      </div>
-      <div>
-        <button @click.prevent="goToRegister">Register</button>
+        <button type="button" @click.prevent="goToRegister">Register</button>
       </div>
       <div v-if="errorMsg">{{ errorMsg }}</div>
     </form>
@@ -67,3 +65,20 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.login {
+  width: 400px;
+  margin: 0 auto;
+}
+
+.button-container {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.button-container button {
+  display: inline-block;
+  margin-right: 10px;
+}
+</style>

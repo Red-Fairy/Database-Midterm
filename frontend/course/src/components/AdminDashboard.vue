@@ -1,14 +1,6 @@
 <template>
-  <div>
+  <div class="centered-container">
     <h2>课程管理</h2>
-    <div class="new-course-form">
-      <h3>创建新课程</h3>
-      <input v-model="newCourse.courseID" placeholder="课程ID" />
-      <input v-model="newCourse.courseName" placeholder="课程名称" />
-      <input v-model="newCourse.courseInfo" placeholder="课程信息" />
-      <button @click="createCourse">创建课程</button>
-    </div>
-    <div v-if="error" class="error">{{ error }}</div>
     <table>
       <thead>
         <tr>
@@ -37,6 +29,14 @@
         </tr>
       </tbody>
     </table>
+    <div class="new-course-form">
+      <h3>创建新课程</h3>
+      <input v-model="newCourse.courseID" placeholder="课程ID" />
+      <input v-model="newCourse.courseName" placeholder="课程名称" />
+      <input v-model="newCourse.courseInfo" placeholder="课程信息" />
+      <button @click="createCourse">创建课程</button>
+    </div>
+    <div v-if="error" class="error">{{ error }}</div>
   </div>
 </template>
 
@@ -100,4 +100,23 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+table {
+  margin-top: 5px;
+}
+.new-course-form {
+  margin-bottom: 10px;
+}
+.error {
+  color: red;
+}
+
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+</style>
 

@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <h3>以下课程中，您为学生：</h3>
-    <table>
+  <div class="centered-container">
+    <h3 class="section-title">以下课程中，您为学生：</h3>
+    <table class="course-table">
       <thead>
         <tr>
           <th>课程ID</th>
@@ -14,7 +14,7 @@
           <td>{{ course.courseID }}</td>
           <td>{{ course.courseName }}</td>
           <td>
-            <button>
+            <button class="action-button">
               <router-link :to="{ name: 'StudentCourse', params: { courseID: course.courseID, userID: userID } }">
                 进入课程
               </router-link>
@@ -23,8 +23,8 @@
         </tr>
       </tbody>
     </table>
-    <h3>以下课程中，您为老师：</h3>
-    <table>
+    <h3 class="section-title">以下课程中，您为老师：</h3>
+    <table class="course-table">
       <thead>
         <tr>
           <th>课程ID</th>
@@ -37,7 +37,7 @@
           <td>{{ course.courseID }}</td>
           <td>{{ course.courseName }}</td>
           <td>
-            <button>
+            <button class="action-button">
               <router-link :to="{ name: 'TeacherCourse', params: { courseID: course.courseID, userID: userID } }">
                 进入课程
               </router-link>
@@ -46,6 +46,7 @@
         </tr>
       </tbody>
     </table>
+    <div v-if="error" class="error">{{ error }}</div>
   </div>
 </template>
 
@@ -58,6 +59,7 @@ export default {
   data() {
     return {
       userID: '',
+      error: '',
       student_courses: [],
       teacher_courses: [],
     };
@@ -80,5 +82,50 @@ export default {
 </script>
   
 <style scoped>
-/* Your component styles go here */
+.error {
+  color: red;
+}
+
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.section-title {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.course-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.course-table th,
+.course-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.course-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  text-align: left;
+}
+
+.course-table .action-button {
+  padding: 6px 12px;
+  background-color: #ffffff;
+  color: rgb(1, 1, 1);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.course-table .action-button:hover {
+  background-color: #315bce9f;
+}
+
 </style>
