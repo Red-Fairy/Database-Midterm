@@ -1,7 +1,7 @@
 <template>
   <div class="centered-container">
     <h2>课程管理</h2>
-    <table>
+    <table class="course-table">
       <thead>
         <tr>
           <th>课程ID</th>
@@ -16,12 +16,12 @@
           <td>{{ course.courseName }}</td>
           <td>{{ course.courseInfo }}</td>
           <td>
-            <button @click="deleteCourse(course.courseID)">删除课程</button>
-            <button>
+            <button @click="deleteCourse(course.courseID)" class="delete-button">删除课程</button>
+            <button class="enter-button">
               <router-link :to="{
                 name: 'AdminCourse',
                 params: { courseID: course.courseID },
-              }" class="btn btn-default">
+              }" class="enter-link">
                 进入课程
               </router-link>
             </button>
@@ -31,12 +31,12 @@
     </table>
     <div class="new-course-form">
       <h3>创建新课程</h3>
-      <input v-model="newCourse.courseID" placeholder="课程ID" />
-      <input v-model="newCourse.courseName" placeholder="课程名称" />
-      <input v-model="newCourse.courseInfo" placeholder="课程信息" />
-      <button @click="createCourse">创建课程</button>
+      <input v-model="newCourse.courseID" placeholder="课程ID" class="input-field" />
+      <input v-model="newCourse.courseName" placeholder="课程名称" class="input-field" />
+      <input v-model="newCourse.courseInfo" placeholder="课程信息" class="input-field" />
+      <button @click="createCourse" class="create-button">创建课程</button>
     </div>
-    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="error" class="error-message">{{ error }}</div>
   </div>
 </template>
 
@@ -102,15 +102,60 @@ export default {
 </script>
 
 <style scoped>
-table {
+table.course-table {
   margin-top: 5px;
+  border-collapse: collapse;
+  width: 100%;
 }
-.new-course-form {
-  margin-bottom: 10px;
+
+table.course-table th,
+table.course-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
-.error {
+
+table.course-table th {
+  background-color: #f2f2f2;
+}
+
+.button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.enter-button {
+  background-color: #2196f3;
+  color: white;
+}
+
+.input-field {
+  padding: 8px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+.create-button {
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.error-message {
   color: red;
-  margin: 10px 0;
+  margin-top: 10px;
 }
 
 .centered-container {
@@ -118,6 +163,4 @@ table {
   flex-direction: column;
   align-items: center;
 }
-
 </style>
-

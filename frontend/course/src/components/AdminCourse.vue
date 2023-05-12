@@ -1,53 +1,57 @@
 <template>
     <div class="centered-container">
-        <h1>{{ courseName }}</h1>
-        <p>{{ courseInfo }}</p>
-
-        <div v-if="error" class="error">{{ error }}</div>
-        <h2>Teachers</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>
-                        <input v-model="newTeacher" />
-                        <button @click="addTeacher">Add</button>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(teacher, index) in teachers" :key="index">
-                    <td>{{ teacher }}</td>
-                    <td><button @click="deleteUser(teacher, true)">Delete</button></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h2>Students</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>
-                        <input v-model="newStudent" />
-                        <button @click="addStudent">Add</button>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(student, index) in students" :key="index">
-                    <td>{{ student }}</td>
-                    <td><button @click="deleteUser(student, false)">Delete</button></td>
-                </tr>
-            </tbody>
-        </table>
-        <button>
-            <router-link :to="{ name: 'AdminDashboard' }" class="btn btn-default">
-                返回主页
-            </router-link>
-        </button>
+      <h1>{{ courseName }}</h1>
+      <p>{{ courseInfo }}</p>
+  
+      <div v-if="error" class="error-message">{{ error }}</div>
+  
+      <h2>Teachers</h2>
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>
+              <div class="input-group">
+                <input v-model="newTeacher" placeholder="Enter teacher username" class="input-field" />
+                <button @click="addTeacher" class="add-button">Add</button>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(teacher, index) in teachers" :key="index">
+            <td>{{ teacher }}</td>
+            <td><button @click="deleteUser(teacher, true)">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <h2>Students</h2>
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>
+              <div class="input-group">
+                <input v-model="newStudent" placeholder="Enter student username" class="input-field" />
+                <button @click="addStudent" class="add-button">Add</button>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(student, index) in students" :key="index">
+            <td>{{ student }}</td>
+            <td><button @click="deleteUser(student, false)">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <button>
+        <router-link :to="{ name: 'AdminDashboard' }" class="button">返回主页</router-link>
+      </button>
     </div>
-</template>
+  </template>
   
 <script>
 import api from "@/api.js";
@@ -119,23 +123,75 @@ export default {
 </script>
   
 <style scoped>
-table {
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
 .centered-container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-table {
-  margin-top: 5px;
+h1 {
+  margin-bottom: 20px;
+  font-size: 24px;
 }
+
+p {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.error-message {
+  color: red;
+  margin: 10px 0;
+}
+
+table.user-table {
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
 th,
 td {
-    border: 1px solid black;
-    padding: 5px;
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+}
+
+.input-field {
+  flex: 1;
+  padding: 5px;
+  font-size: 14px;
+  width: 50%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.add-button {
+  margin-left: 8px;
+  margin-top: 0;
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button {
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 0px;
 }
 </style>
-  
+

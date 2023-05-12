@@ -1,26 +1,26 @@
 <template>
+  <h1 class="title">校园课程管理系统</h1>
   <div class="login">
-    <h1>Login</h1>
+    <h2>请登录：</h2>
     <form @submit.prevent="logIn">
-      <div>
+      <div class="form-group">
         <label for="userid">User ID:</label>
-        <input type="text" id="userid" v-model="userid" />
+        <input type="text" id="userid" v-model="userid" class="input-field" />
       </div>
-      <div>
+      <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" />
+        <input type="password" id="password" v-model="password" class="input-field" />
       </div>
       <div class="button-container">
-        <button type="submit">Login</button>
-        <button type="button" @click.prevent="goToRegister">Register</button>
+        <button type="submit" class="button-primary">Login</button>
+        <button type="button" @click.prevent="goToRegister" class="button-secondary">Register</button>
       </div>
-      <div v-if="errorMsg">{{ errorMsg }}</div>
+      <div v-if="errorMsg" class="error-message">{{ errorMsg }}</div>
     </form>
   </div>
 </template>
 
 <script>
-// import axios from "axios";
 import api from '@/api';
 
 export default {
@@ -37,21 +37,16 @@ export default {
       try {
         const response = await api.login(this.userid, this.password);
         if (response.code === 200) {
-          // 登录成功，保存 token 和 permission 到 localStorage
           localStorage.setItem('token', response.token);
           localStorage.setItem('permission', response.permission);
-          localStorage.setItem('userID', this.userid); // 将用户名存储到localStorage
+          localStorage.setItem('userID', this.userid);
 
-          // 根据权限重定向到相应的页面
           if (response.permission) {
-            // 如果用户是 admin，重定向到 AdminDashboard
             this.$router.push({ name: 'AdminDashboard' });
           } else {
-            // 如果用户是 user，重定向到 UserDashboard
             this.$router.push({ name: 'UserDashboard' });
           }
         } else {
-          // 登录失败，显示错误信息
           this.errorMsg = response.msg;
         }
       } catch (error) {
@@ -67,17 +62,58 @@ export default {
 </script>
 
 <style scoped>
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .login {
   width: 400px;
   margin: 0 auto;
   text-align: center;
 }
 
+.form-group {
+  margin-bottom: 10px;
+}
+
+.label {
+  display: block;
+  font-weight: bold;
+}
+
+.input-field {
+  padding: 5px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
 .button-container {
   margin-top: 10px;
 }
 
-.button-container button {
-  margin-right: 10px;
+.button-primary {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button-secondary {
+  padding: 10px 20px;
+  background-color: #ccc;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
 }
 </style>
