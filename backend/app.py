@@ -1,8 +1,8 @@
 
 # -*- coding: UTF-8 -*-
 # This project is based on the great work https://github.com/wfloveiu/-----
-# Author: Yuyang Zhou
-# E-Mail: zhouyuyangmike@foxmail.com
+# Author: Yuyang Zhou and Rundong Luo
+# Email: {2000013061, rundong_luo}@stu.pku.edu.cn
 
 from flask_cors import cross_origin
 from flask_cors import CORS
