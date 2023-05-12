@@ -1,6 +1,6 @@
 /*
-* Author: Yuyang Zhou
-* Email: 2000013061@stu.pku.edu.cn
+* Author: Yuyang Zhou and Rundong Luo
+* Email: {2000013061, rundong_luo}@stu.pku.edu.cn
 */
 
 /*==============================================================*/
