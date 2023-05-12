@@ -1,24 +1,25 @@
 <template>
-    <div>
+    <div class="assignment-submission">
         <h3>提交作业</h3>
-        <input v-model="newsubmissionInfo" type="text" placeholder="输入提交信息" />
-        <button @click="submitAssignment">提交作业</button>
+        <div class="input-group">
+            <input v-model="newsubmissionInfo" type="text" placeholder="输入提交信息" />
+            <button @click="submitAssignment">提交作业</button>
+        </div>
+
         <h3>您的作业提交情况：</h3>
         <table>
             <thead>
                 <tr>
-                    <th>提交ID</th>
-                    <th>提交信息</th>
-                    <th>分数</th>
+                    <th class="centered-header">提交ID</th>
+                    <th class="centered-header">提交信息</th>
+                    <th class="centered-header">分数</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="submission in submissions" :key="submission.submissionID">
                     <td>{{ submission.submissionID }}</td>
                     <td>{{ submission.submissionInfo }}</td>
-                    <td>
-                        {{ submission.submissionScore }}
-                    </td>
+                    <td>{{ submission.submissionScore }}</td>
                 </tr>
             </tbody>
         </table>
@@ -41,7 +42,7 @@ export default {
         const assignmentID = this.$route.params.assignmentID;
         const courseID = this.$route.params.courseID;
         const userID = this.$route.params.userID;
-        console.log('userID:',userID);
+        console.log('userID:', userID);
         const response = await api.getCourseAssignmentSubmissionsStudent(assignmentID, courseID, userID, false);
         if (response.status === "200") {
             this.submissions = response.tabledata;
@@ -64,7 +65,7 @@ export default {
             const submissionInfo = this.newsubmissionInfo;
             const response = await api.submitAssignment(assignmentID, courseID, userID, submissionInfo);
             this.newsubmissionInfo = '';
-            console.log('response:',response)
+            console.log('response:', response)
             const submissionID = response.submissionID;
             this.submissions.push({
                 submissionID: submissionID,
@@ -75,3 +76,52 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+.assignment-submission {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.assignment-submission h3 {
+    margin: 10px 0;
+}
+
+.assignment-submission input {
+    padding: 6px;
+    margin-right: 5px;
+    border: 1px solid #ddd;
+}
+
+.assignment-submission .input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+
+.assignment-submission button {
+    padding: 6px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.assignment-submission table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.assignment-submission th,
+.assignment-submission td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+.assignment-submission .centered-header {
+    text-align: center;
+}
+</style>

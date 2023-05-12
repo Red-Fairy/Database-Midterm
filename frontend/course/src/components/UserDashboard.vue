@@ -15,7 +15,12 @@
           <td>{{ course.courseName }}</td>
           <td>
             <button class="action-button">
-              <router-link :to="{ name: 'StudentCourse', params: { courseID: course.courseID, userID: userID } }">
+              <router-link
+                :to="{
+                  name: 'StudentCourse',
+                  params: { courseID: course.courseID, userID: userID }
+                }"
+              >
                 进入课程
               </router-link>
             </button>
@@ -38,7 +43,12 @@
           <td>{{ course.courseName }}</td>
           <td>
             <button class="action-button">
-              <router-link :to="{ name: 'TeacherCourse', params: { courseID: course.courseID, userID: userID } }">
+              <router-link
+                :to="{
+                  name: 'TeacherCourse',
+                  params: { courseID: course.courseID, userID: userID }
+                }"
+              >
                 进入课程
               </router-link>
             </button>
@@ -98,7 +108,8 @@ export default {
 }
 
 .course-table {
-  width: 100%;
+  width: 80%;
+  max-width: 600px; /* Adjust the maximum width as needed */
   border-collapse: collapse;
   margin-bottom: 20px;
 }
@@ -112,20 +123,19 @@ export default {
 .course-table th {
   background-color: #f5f5f5;
   font-weight: bold;
-  text-align: left;
+  text-align: center;
+  vertical-align: middle; /* Add this line to vertically align the content */
 }
-
-.course-table .action-button {
+.action-button {
   padding: 6px 12px;
-  background-color: #ffffff;
-  color: rgb(1, 1, 1);
+  background-color: #007bff;
+  color: white;
   border: none;
   cursor: pointer;
   text-decoration: none;
 }
 
-.course-table .action-button:hover {
-  background-color: #315bce9f;
+.action-button:not(:last-child) {
+  margin-right: 5px;
 }
-
 </style>

@@ -70,15 +70,14 @@ export default {
 .login {
   width: 400px;
   margin: 0 auto;
+  text-align: center;
 }
 
 .button-container {
   margin-top: 10px;
-  text-align: center;
 }
 
 .button-container button {
-  display: inline-block;
   margin-right: 10px;
 }
 </style>

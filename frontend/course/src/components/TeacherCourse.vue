@@ -1,88 +1,104 @@
 <template>
-    <div>
+    <div class="course-details">
         <h3>课程名称：{{ courseName }}</h3>
         <h3>课程信息：{{ courseInfo }}</h3>
-        <h3>教师列表：</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>教师ID</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="teacher in teachers" :key="teacher">
-                    <td>{{ teacher }}</td>
-                </tr>
-            </tbody>
-        </table>
-        <h3>学生列表：</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>学生ID</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="student in students" :key="student">
-                    <td>{{ student }}</td>
-                </tr>
-            </tbody>
-        </table>
 
-        <h3>讲座信息：</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>讲座ID</th>
-                    <th>讲座信息</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="lecture in lectures" :key="lecture.lectureID">
-                    <td>{{ lecture.lectureID }}</td>
-                    <td>
-                        <input v-model="editLectureInfo[lecture.lectureID]" type="text"
-                            :placeholder="lecture.lectureInfo" />
-                    </td>
-                    <td>
-                        <button @click="editLecture(lecture.lectureID)">编辑</button>
-                        <button @click="deleteLecture(lecture.lectureID)">删除</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <input v-model="newLectureInfo.lectureID" type="int" placeholder="输入新的讲座ID" />
-        <input v-model="newLectureInfo.lectureInfo" type="text" placeholder="输入新的讲座信息" />
-        <button @click="addLecture">添加讲座</button>
+        <div class="teacher-list">
+            <h3>教师列表：</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="centered-header">教师ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="teacher in teachers" :key="teacher">
+                        <td>{{ teacher }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        <h3>作业信息：</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>作业ID</th>
-                    <th>作业信息</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="assignment in assignments" :key="assignment.assignmentID">
-                    <td>{{ assignment.assignmentID }}</td>
-                    <td>
-                        <input v-model="editAssignmentInfo[assignment.assignmentID]" type="text"
-                            :placeholder="assignment.assignmentInfo" />
-                    </td>
-                    <td>
-                        <button @click="editAssignment(assignment.assignmentID)">编辑</button>
-                        <button @click="deleteAssignment(assignment.assignmentID)">删除</button>
-                        <button @click="goToAssignment(assignment.assignmentID, courseID)">查看作业</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <input v-model="newAssignmentInfo.assignmentID" type="int" placeholder="输入新的作业ID" />
-        <input v-model="newAssignmentInfo.assignmentInfo" type="text" placeholder="输入新的作业信息" />
-        <button @click="addAssignment">添加作业</button>
+        <div class="student-list">
+            <h3>学生列表：</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="centered-header">学生ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="student in students" :key="student">
+                        <td>{{ student }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="lecture-list">
+            <h3>讲座信息：</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>讲座ID</th>
+                        <th>讲座信息</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="lecture in lectures" :key="lecture.lectureID">
+                        <td>{{ lecture.lectureID }}</td>
+                        <td>
+                            <input v-model="editLectureInfo[lecture.lectureID]" type="text"
+                                :placeholder="lecture.lectureInfo" />
+                        </td>
+                        <td>
+                            <button @click="editLecture(lecture.lectureID)">编辑</button>
+                            <button @click="deleteLecture(lecture.lectureID)">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="add-lecture">
+                <input v-model="newLectureInfo.lectureID" type="int" placeholder="输入新的讲座ID" />
+                <input v-model="newLectureInfo.lectureInfo" type="text" placeholder="输入新的讲座信息" />
+                <button @click="addLecture">添加讲座</button>
+            </div>
+            <div v-if="errorLecture" class="error">{{ errorLecture }}</div>
+        </div>
+
+        <div class="assignment-list">
+            <h3>作业信息：</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>作业ID</th>
+                        <th>作业信息</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="assignment in assignments" :key="assignment.assignmentID">
+                        <td>{{ assignment.assignmentID }}</td>
+                        <td>
+                            <input v-model="editAssignmentInfo[assignment.assignmentID]" type="text"
+                                :placeholder="assignment.assignmentInfo" />
+                        </td>
+                        <td>
+                            <button @click="editAssignment(assignment.assignmentID)">编辑</button>
+                            <button @click="deleteAssignment(assignment.assignmentID)">删除</button>
+                            <button @click="goToAssignment(assignment.assignmentID, courseID)">查看作业</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="add-assignment">
+                <input v-model="newAssignmentInfo.assignmentID" type="int" placeholder="输入新的作业ID" />
+                <input v-model="newAssignmentInfo.assignmentInfo" type="text" placeholder="输入新的作业信息" />
+                <button @click="addAssignment">添加作业</button>
+            </div>
+            <div v-if="errorAssignment" class="error">{{ errorAssignment }}</div>
+        </div>
     </div>
 </template>
   
@@ -92,6 +108,8 @@ import api from '@/api.js';
 export default {
     data() {
         return {
+            errorLecture: '',
+            errorAssignment: '',
             courseID: '',
             userID: '',
             students: [],
@@ -164,9 +182,11 @@ export default {
                         lectureID: lectureInfo.lectureID,
                         lectureInfo: lectureInfo.lectureInfo,
                     });
-                    this.newLectureInfo = '';
+                    this.newLectureInfo = {};
+                    this.errorLecture = '';
                 } else {
-                    console.error("Failed to add lecture");
+                    console.log("Failed to add lecture");
+                    this.errorLecture = "Failed to add lecture";
                 }
             }
         },
@@ -206,9 +226,11 @@ export default {
                         assignmentID: assignmentInfo.assignmentID,
                         assignmentInfo: assignmentInfo.assignmentInfo,
                     });
-                    this.newAssignmentInfo = '';
+                    this.newAssignmentInfo = {};
+                    this.errorAssignment = '';
                 } else {
-                    console.error("Failed to add assignment");
+                    console.log("Failed to add assignment");
+                    this.errorAssignment = "Failed to add assignment";
                 }
             }
         },
@@ -227,4 +249,72 @@ export default {
 };
 </script>
 
+<style scoped>
+.course-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.course-details h3 {
+    margin: 10px 0;
+}
+
+.course-details table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.course-details .centered-header {
+  text-align: center;
+}
+
+.course-details th,
+.course-details td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+.error {
+  color: red;
+  margin: 10px 0;
+}
+
+.course-details th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    text-align: left;
+}
+
+.course-details input {
+    padding: 6px;
+    margin-right: 5px;
+    border: 1px solid #ddd;
+}
+
+.course-details button {
+    padding: 6px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.course-details button:not(:last-child) {
+    margin-right: 5px;
+}
+
+.add-lecture,
+.add-assignment {
+    margin-top: 10px;
+}
+
+.add-lecture input,
+.add-assignment input,
+.add-lecture button,
+.add-assignment button {
+    margin-top: 5px;
+}
+</style>
   

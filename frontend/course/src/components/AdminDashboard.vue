@@ -110,6 +110,7 @@ table {
 }
 .error {
   color: red;
+  margin: 10px 0;
 }
 
 .centered-container {
