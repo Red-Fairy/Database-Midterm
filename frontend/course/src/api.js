@@ -1,3 +1,8 @@
+/*
+Author: Rundong Luo
+E-mail: rundong_luo@stu.pku.edu.cn
+*/
+
 import axios from 'axios';
 
 const api = axios.create({

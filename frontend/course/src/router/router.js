@@ -1,3 +1,8 @@
+/*
+Author: Rundong Luo
+E-mail: rundong_luo@stu.pku.edu.cn
+*/
+
 import { createRouter, createWebHistory } from 'vue-router';
 import LogIn from '../components/LogIn.vue';
 import Register from '../components/UserRegister.vue';
