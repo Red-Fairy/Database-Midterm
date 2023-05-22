@@ -1,5 +1,8 @@
 <template>
     <div class="assignment-submission">
+        <button>
+            <router-link :to="{ name: 'StudentCourse', params: { courseID: $route.params.courseID, userID: $route.params.userID } }" class="button">返回课程</router-link>
+        </button>
         <h3>提交作业</h3>
         <div class="input-group">
             <input v-model="newsubmissionInfo" type="text" placeholder="输入提交信息" />
@@ -43,7 +46,7 @@ export default {
         const courseID = this.$route.params.courseID;
         const userID = this.$route.params.userID;
         console.log('userID:', userID);
-        const response = await api.getCourseAssignmentSubmissionsStudent(assignmentID, courseID, userID, false);
+        const response = await api.getCourseAssignmentSubmissionsStudent(courseID, assignmentID, userID, false);
         if (response.status === "200") {
             this.submissions = response.tabledata;
             // if score is null, set it to "未打分"

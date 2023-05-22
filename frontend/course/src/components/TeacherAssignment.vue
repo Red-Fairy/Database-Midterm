@@ -1,5 +1,8 @@
 <template>
     <div class="assignment-submission">
+        <button>
+            <router-link :to="{ name: 'TeacherCourse', params: { courseID: $route.params.courseID, userID: $route.params.userID } }" class="button">返回课程</router-link>
+        </button>
         <div v-if="error" class="error">{{ error }}</div>
         <h3>作业提交情况：</h3>
         <table>
@@ -46,10 +49,11 @@ export default {
     async mounted() {
         const assignmentID = this.$route.params.assignmentID;
         const courseID = this.$route.params.courseID;
-        const response = await api.getCourseAssignmentSubmissions(assignmentID, courseID, true);
+        const response = await api.getCourseAssignmentSubmissions(courseID, assignmentID, true);
         if (response.status === "200") {
             this.submissions = response.tabledata;
         } else {
+            console.log('response:',response)
             console.error("Failed to fetch submissions");
         }
     },

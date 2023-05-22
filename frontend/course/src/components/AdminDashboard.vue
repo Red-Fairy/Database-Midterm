@@ -72,7 +72,7 @@ export default {
             courseName: "",
             courseInfo: "",
           };
-          this.error = ""; // 清除错误
+          this.error = "课程创建成功"; // 清除错误
         } else {
           this.error = "创建课程失败";
         }

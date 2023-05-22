@@ -90,8 +90,10 @@ export default {
                 if (response.data.status === "200") {
                     this.teachers.push(this.newTeacher);
                     this.newTeacher = "";
+                    this.error = "";
                 } else {
-                    this.error = "Failed to add teacher"
+                    this.error = response.data.msg;
+                    this.newTeacher = "";
                 }
             }
         },
@@ -101,8 +103,10 @@ export default {
                 if (response.data.status === "200") {
                     this.students.push(this.newStudent);
                     this.newStudent = "";
+                    this.error = "";
                 } else {
-                    this.error = "Failed to add student"
+                    this.error = response.data.msg;
+                    this.newStudent = "";
                 }
             }
         },

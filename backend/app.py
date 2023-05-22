@@ -253,18 +253,20 @@ def user_get_user_course():
             sql = ('select * from userCourseRelationship where courseID = {0} and userID = "{1}"').format(courseID, userID)
             data = db.session.execute(text(sql)).fetchall()
             if data:
-                return jsonify({"status": "1000", "msg": "用户已存在"})
+                return jsonify({"status": "1000", "msg": "用户已经为该课程的教师或学生"})
             # check if not a user
             sql = ('select * from user where userID = "{0}"').format(userID)
             data = db.session.execute(text(sql)).fetchall()
             if not data:
-                return jsonify({"status": "1000", "msg": "用户不存在"})
+                return jsonify({"status": "900", "msg": "用户不存在"})
             sql = ('insert userCourseRelationship(courseID, userID, teacher) '
                  'value({1}, "{2}", {0})').format(teacher, courseID, userID)
-            db.session.execute(text(sql))
-            db.session.commit()
-
-            return jsonify({"status": "200", "msg": "修改成功"})
+            try:
+                db.session.execute(text(sql))
+                db.session.commit()
+                return jsonify({"status": "200", "msg": "修改成功"})
+            except:
+                return jsonify({"status": "800", "msg": "不能将超管加入课程"})
         
         elif method == "DELETE":
             courseID = rq.get("courseID")
@@ -526,7 +528,7 @@ def user_get_submission():
         
         sql = ('select * '
                'from userCourseRelationship '
-               'where userID = {0} and courseID = {1}').format(userID, courseID)
+               'where userID = "{0}" and courseID = {1}').format(userID, courseID)
         data = db.session.execute(text(sql)).fetchall()
         if not data:
             return jsonify({"status": "1000", "msg": "用户与课程不匹配"})

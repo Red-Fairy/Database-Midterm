@@ -130,6 +130,7 @@ export default {
       permission: permission,
       method: 'GET',
     };
+    console.log(info);
     const response = await api.post('/api/user/submission', info);
     return response.data;
   },

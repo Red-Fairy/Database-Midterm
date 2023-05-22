@@ -50,7 +50,7 @@ const routes = [
     component: TeacherCourse,
   },
   {
-    path: '/teacher/assignment/:courseID/:assignmentID',
+    path: '/teacher/assignment/:userID/:courseID/:assignmentID',
     name: 'TeacherAssignment',
     component: TeacherAssignment,
     props: true
@@ -61,7 +61,7 @@ const routes = [
     component: StudentCourse,
   },
   {
-    path: '/student/assignment/:courseID/:assignmentID/:userID',
+    path: '/student/assignment/:userID/:courseID/:assignmentID',
     name: 'StudentAssignment',
     component: StudentAssignment,
     props: true

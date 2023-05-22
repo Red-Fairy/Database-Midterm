@@ -1,5 +1,10 @@
 <template>
     <div class="course-details">
+        <div>
+            <button>
+                <router-link :to="{ name: 'UserDashboard' }" class="button">返回主页</router-link>
+            </button>
+        </div>
         <h3>课程名称：{{ courseName }}</h3>
         <h3>课程信息：{{ courseInfo }}</h3>
 
@@ -242,8 +247,9 @@ export default {
             });
             this.assignments = this.assignments.filter(assignment => assignment.assignmentID !== assignmentID);
         },
-        goToAssignment(assignmentID, courseID) {
-            this.$router.push({ name: 'TeacherAssignment', params: { assignmentID, courseID } });
+        async goToAssignment(assignmentID, courseID) {
+            const userID = this.$route.params.userID;
+            this.$router.push({ name: 'TeacherAssignment', params: { userID, courseID, assignmentID } });
         },
     },
 };
@@ -267,7 +273,7 @@ export default {
 }
 
 .course-details .centered-header {
-  text-align: center;
+    text-align: center;
 }
 
 .course-details th,
@@ -277,8 +283,8 @@ export default {
 }
 
 .error {
-  color: red;
-  margin: 10px 0;
+    color: red;
+    margin: 10px 0;
 }
 
 .course-details th {
