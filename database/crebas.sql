@@ -116,7 +116,25 @@ create table userCourseRelationship
    primary key (courseID, userID)
 );
 
-INSERT INTO userCourseRelationship VALUES (1, 'redfairy', false);
+DELIMITER $$
+CREATE TRIGGER check_before_insert
+BEFORE INSERT ON userCourseRelationship
+FOR EACH ROW
+BEGIN
+   DECLARE is_supermanager BOOLEAN;
+
+   SELECT superManager INTO is_supermanager
+   FROM user
+   WHERE userID = NEW.userID;
+
+   IF is_supermanager = TRUE THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Cannot insert a supermanager into userCourseRelationship';
+   END IF;
+END$$
+DELIMITER ;
+
+-- INSERT INTO userCourseRelationship VALUES (1, 'redfairy', false);
 INSERT INTO userCourseRelationship VALUES (1, 'bluefairy', true);
 INSERT INTO userCourseRelationship VALUES (1, 'yellowfairy', false);
 
