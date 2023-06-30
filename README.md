@@ -1,4 +1,4 @@
-## Code Implementation of the Midterm Project for PKU Introduction to Database Systems (Honor Track, Spring 2023)
+## Code Implementation of the Project for PKU Introduction to Database Systems (Honor Track, Spring 2023)
 
 **Authors: Yuyang Zhou, Rundong Luo.**
 
